@@ -1,0 +1,276 @@
+.home-content {
+  --background: #F9FAF9;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  
+  .greeting {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1B5E20;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.points-card {
+  margin: 0 0 24px 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+  color: white;
+  
+  ion-card-content {
+    padding: 24px;
+  }
+  
+  .points-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .points-icon {
+      font-size: 48px;
+    }
+    
+    .points-info {
+      flex: 1;
+      
+      .points-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      
+      .rank-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        opacity: 0.9;
+        
+        .plant-icon {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
+
+.section {
+  margin-bottom: 24px;
+  
+  .section-header {
+    margin-bottom: 12px;
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin: 0;
+      
+      .section-icon {
+        font-size: 20px;
+        color: #FFB300;
+      }
+    }
+  }
+}
+
+.streak-card {
+  margin: 0 0 16px 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FFB300 0%, #FFC107 100%);
+  box-shadow: 0 4px 16px rgba(255, 179, 0, 0.2);
+  
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  .streak-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    
+    .flame-icon {
+      font-size: 32px;
+      color: #FF6F00;
+    }
+    
+    .streak-text {
+      font-size: 16px;
+      font-weight: 600;
+      
+      strong {
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.habits-card {
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1B5E20;
+    }
+  }
+  
+  .habit-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: #F5F5F5;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    ion-label {
+      h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1B5E20;
+        margin-bottom: 4px;
+      }
+      
+      p {
+        font-size: 13px;
+        color: #666;
+      }
+    }
+  }
+  
+  .add-habit-btn {
+    margin-top: 16px;
+    --border-radius: 12px;
+    --border-color: #A8E6CF;
+    --color: #1B5E20;
+    font-weight: 600;
+  }
+}
+
+.location-card {
+  margin: 0 0 12px 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  .location-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .location-info {
+      flex: 1;
+      
+      h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1B5E20;
+        margin: 0 0 4px 0;
+      }
+      
+      p {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+      }
+    }
+    
+    .arrow-icon {
+      font-size: 20px;
+      color: #A8E6CF;
+    }
+  }
+}
+
+.loading-container,
+.no-data-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 40px 20px;
+  text-align: center;
+  
+  p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  background: rgba(27, 94, 32, 0.9);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  z-index: 9999;
+  pointer-events: none; // Không block clicks
+}
+
+.empty-habits,
+.empty-locations {
+  padding: 20px;
+  text-align: center;
+  
+  p {
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+// Đảm bảo tất cả interactive elements có thể click được
+ion-button,
+ion-checkbox,
+ion-item[button],
+ion-card[button] {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+// Đảm bảo content không bị block
+.home-content {
+  pointer-events: auto !important;
+  
+  > * {
+    pointer-events: auto !important;
+  }
+}

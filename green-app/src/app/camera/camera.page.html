@@ -1,17 +1,88 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="camera-header">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/app/home"></ion-back-button>
+    </ion-buttons>
     <ion-title>
-      Camera
+      <div class="header-title">
+        <span>Quét AI</span>
+        <ion-icon name="checkmark-circle" class="ai-icon"></ion-icon>
+      </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Camera</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="camera-content">
+  <div class="camera-container">
+    <!-- Camera View Area -->
+    <div class="camera-view" [style.background-image]="capturedImage ? 'url(' + capturedImage + ')' : 'none'">
+      <!-- Scan Frame -->
+      <div class="scan-frame">
+        <div class="scan-corner top-left"></div>
+        <div class="scan-corner top-right"></div>
+        <div class="scan-corner bottom-left"></div>
+        <div class="scan-corner bottom-right"></div>
+        
+        <!-- Detection Result -->
+        <div class="detection-result" *ngIf="detectedObject">
+          <div class="detected-object">
+            <ion-icon name="checkmark-circle" class="check-icon"></ion-icon>
+            <span>{{detectedObject}}</span>
+          </div>
+        </div>
+        
+        <!-- Scanning Indicator -->
+        <div class="scanning-indicator" *ngIf="isScanning && !detectedObject">
+          <div class="scanning-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p>Đang nhận diện...</p>
+        </div>
+      </div>
+    </div>
 
-  <app-explore-container name="Camera page"></app-explore-container>
+    <!-- Instructions -->
+    <div class="instructions">
+      <p>Gợi ý: Hãy chụp rõ logo hoặc toàn cảnh</p>
+    </div>
+
+    <!-- Capture Button -->
+    <div class="capture-section">
+      <ion-button 
+        class="capture-button" 
+        shape="round" 
+        (click)="capturePhoto()"
+        [disabled]="isScanning || isProcessing">
+        <ion-icon name="camera" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <!-- Submit Button (shown when detected) -->
+    <div class="submit-section" *ngIf="detectedObject && !isScanning">
+      <ion-button 
+        expand="block" 
+        color="success"
+        (click)="submitActivity()"
+        [disabled]="isProcessing">
+        Xác nhận và nhận điểm
+      </ion-button>
+    </div>
+
+    <!-- Manual Selection -->
+    <div class="manual-selection">
+      <p class="manual-label">Chọn thủ công:</p>
+      <div class="manual-options">
+        <ion-chip 
+          *ngFor="let option of manualOptions" 
+          class="manual-chip"
+          (click)="selectManualOption(option)"
+          [disabled]="isProcessing || isScanning">
+          <ion-icon [name]="option.icon"></ion-icon>
+          <ion-label>{{option.name}}</ion-label>
+        </ion-chip>
+      </div>
+    </div>
+  </div>
 </ion-content>

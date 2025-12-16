@@ -1,17 +1,121 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      To Do List
+      <div class="header-content">
+        <span class="greeting">👋 Chào {{currentTime}}, {{userName}}!</span>
+        <div class="header-actions">
+          <ion-button fill="clear" size="small">
+            <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small">
+            <ion-icon name="settings-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Trang chủ</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="home-content">
+  <!-- No User State -->
+  <div *ngIf="!userName && !isLoading" class="no-data-container">
+    <p>Vui lòng đăng nhập để xem dữ liệu</p>
+  </div>
 
-  <app-explore-container name="Trang chủ"></app-explore-container>
+  <!-- Content - hiển thị ngay cả khi đang load (skeleton) hoặc đã load xong -->
+  <div *ngIf="userName">
+    <!-- Loading overlay nhỏ ở góc trên -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <p>Đang tải...</p>
+    </div>
+  <!-- Points & Badge Card -->
+  <ion-card class="points-card">
+    <ion-card-content>
+      <div class="points-display">
+        <div class="points-icon">🏆</div>
+        <div class="points-info">
+          <div class="points-value">{{greenPoints | number}} GreenPoints</div>
+          <div class="rank-badge">
+            <span class="plant-icon">🌱</span>
+            <span class="rank-text">Hạng: {{rank}}</span>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Habit Tracker Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="flame" class="section-icon"></ion-icon>
+        THÓI QUEN CỦA TÔI
+      </h2>
+    </div>
+    
+    <ion-card class="streak-card">
+      <ion-card-content>
+        <div class="streak-info">
+          <ion-icon name="flame" class="flame-icon"></ion-icon>
+          <span class="streak-text">Chuỗi sống xanh: <strong>{{streak}} ngày</strong></span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card class="habits-card">
+      <ion-card-header>
+        <ion-card-title>Mục tiêu hôm nay:</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="habits.length === 0" class="empty-habits">
+          <p>Chưa có thói quen nào. Hãy thêm thói quen mới!</p>
+        </div>
+        
+        <ion-item *ngFor="let habit of habits" class="habit-item">
+          <ion-checkbox 
+            slot="start" 
+            [checked]="habit.completed"
+            (ionChange)="toggleHabit(habit)">
+          </ion-checkbox>
+          <ion-label>
+            <h3>{{habit.name}}</h3>
+            <p>{{habit.completed ? 'Đã xong' : 'Chưa làm'}}</p>
+          </ion-label>
+          <ion-badge slot="end" color="success">+{{habit.points}} GP</ion-badge>
+        </ion-item>
+        
+        <ion-button expand="block" fill="outline" class="add-habit-btn" (click)="addHabit()">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Thêm thói quen
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Nearby Locations Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <ion-icon name="location" class="section-icon"></ion-icon>
+        GẦN BẠN CÓ GÌ?
+      </h2>
+    </div>
+    
+    <div *ngIf="nearbyLocations.length === 0" class="empty-locations">
+      <p>Không có địa điểm nào gần đây</p>
+    </div>
+    
+    <ion-card *ngFor="let location of nearbyLocations" class="location-card" button>
+      <ion-card-content>
+        <div class="location-content">
+          <div class="location-info">
+            <h3>🏪 {{location.name}}</h3>
+            <p>{{location.distance || 'N/A'}} - Tích điểm ngay</p>
+          </div>
+          <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  </div>
 </ion-content>

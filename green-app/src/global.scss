@@ -35,3 +35,29 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Fix for clickable elements */
+ion-button,
+ion-checkbox,
+ion-item,
+ion-card[button],
+ion-chip,
+ion-segment-button {
+  pointer-events: auto !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure content areas are interactive */
+ion-content {
+  pointer-events: auto !important;
+  
+  > * {
+    pointer-events: auto !important;
+  }
+}
+
+/* Prevent any overlay from blocking interactions */
+.ion-page {
+  pointer-events: auto !important;
+}

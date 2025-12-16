@@ -1,17 +1,73 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Đổi thưởng
+      <div class="header-content">
+        <span>🎁 Cửa Hàng Đổi Quà</span>
+      </div>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Đổi thưởng</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="reward-content">
+  <!-- Points Display -->
+  <div class="points-header">
+    <div class="points-info">
+      <span class="points-label">Điểm của bạn:</span>
+      <div class="points-value">
+        <span class="points-number">{{userPoints | number}} GP</span>
+        <ion-icon name="diamond" class="diamond-icon"></ion-icon>
+      </div>
+    </div>
+  </div>
 
-  <app-explore-container name="Đổi thưởng page"></app-explore-container>
+  <!-- Category Filter -->
+  <div class="category-section">
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange()" class="category-segment">
+      <ion-segment-button *ngFor="let cat of categories" [value]="cat.value">
+        <ion-label>{{cat.label}}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <p>Đang tải...</p>
+  </div>
+
+  <!-- Rewards Grid -->
+  <div class="rewards-grid" *ngIf="!isLoading">
+    <ion-card 
+      *ngFor="let reward of filteredRewards" 
+      class="reward-card"
+      [class.affordable]="reward.canAfford"
+      [class.unaffordable]="!reward.canAfford">
+      <div class="reward-image">
+        <span class="reward-emoji">{{reward.imageEmoji || '🎁'}}</span>
+      </div>
+      <ion-card-header>
+        <ion-card-title>{{reward.name}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="reward-description" *ngIf="reward.description">
+          <p>{{reward.description}}</p>
+        </div>
+        <div class="reward-points">
+          <ion-icon name="diamond" class="diamond-small"></ion-icon>
+          <span class="points-text">{{reward.points | number}} GP</span>
+        </div>
+        <ion-button 
+          expand="block" 
+          class="exchange-btn"
+          [disabled]="!reward.canAfford"
+          (click)="exchangeReward(reward)">
+          {{reward.canAfford ? 'ĐỔI NGAY' : 'KHÔNG ĐỦ ĐIỂM'}}
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredRewards.length === 0" class="empty-state">
+    <p>Không có phần thưởng nào</p>
+  </div>
 </ion-content>

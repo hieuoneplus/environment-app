@@ -15,10 +15,18 @@ public class BackendApplication {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override public void addCorsMappings(CorsRegistry registry) {
+                // Get frontend URL from environment variable, fallback to localhost for dev
+                String frontendUrl = System.getenv("FRONTEND_URL");
+                if (frontendUrl == null || frontendUrl.isEmpty()) {
+                    frontendUrl = "http://localhost:4200"; // Default for local development
+                }
+                
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
+                        .allowedOrigins(frontendUrl)
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                        .allowedHeaders("*")
+                        .exposedHeaders("*")
+                        .maxAge(3600);
             }
         };
     }

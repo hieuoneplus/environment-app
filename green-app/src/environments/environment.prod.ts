@@ -1,4 +1,4 @@
 export const environment = {
-  apiBase: 'http://localhost:8080/api',
+  apiBase: 'https://your-backend-url.com', // Thay bằng URL backend production của bạn
   production: true
 };

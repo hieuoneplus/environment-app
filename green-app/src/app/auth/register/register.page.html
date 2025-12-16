@@ -1,21 +1,131 @@
-<ion-content class="auth">
-  <div class="card">
-    <h2>Đăng ký</h2>
+<ion-content [fullscreen]="true" class="register-content">
+  <div class="register-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="logo-container">
+        <ion-icon name="leaf" class="logo-icon"></ion-icon>
+      </div>
+      <h1 class="welcome-text">Tạo tài khoản mới</h1>
+      <p class="subtitle">Tham gia cộng đồng sống xanh ngay hôm nay</p>
+    </div>
 
-    <ion-input placeholder="Họ tên" [(ngModel)]="form.name"></ion-input>
-    <ion-input placeholder="Địa chỉ" [(ngModel)]="form.address"></ion-input>
+    <!-- Form Section -->
+    <div class="form-container">
+      <form (ngSubmit)="register()">
+        <!-- Name Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Họ và tên <span class="required">*</span></ion-label>
+          <ion-input
+            type="text"
+            [(ngModel)]="form.name"
+            name="name"
+            placeholder="Nhập họ và tên"
+            [disabled]="isSubmitting"
+            required>
+          </ion-input>
+        </ion-item>
 
-    <ion-select placeholder="Giới tính" [(ngModel)]="form.gender">
-      <ion-select-option value="Nam">Nam</ion-select-option>
-      <ion-select-option value="Nữ">Nữ</ion-select-option>
-    </ion-select>
+        <!-- Email Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="mail-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Email <span class="required">*</span></ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="form.email"
+            name="email"
+            placeholder="Nhập email của bạn"
+            [disabled]="isSubmitting"
+            required>
+          </ion-input>
+        </ion-item>
 
-    <ion-datetime presentation="date" [(ngModel)]="form.dob"></ion-datetime>
+        <!-- Password Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Mật khẩu <span class="required">*</span></ion-label>
+          <ion-input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="form.password"
+            name="password"
+            placeholder="Tối thiểu 6 ký tự"
+            [disabled]="isSubmitting"
+            required>
+          </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            (click)="togglePassword()"
+            class="toggle-password-btn">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
 
-    <ion-input placeholder="Email" [(ngModel)]="form.email"></ion-input>
-    <ion-input type="password" placeholder="Mật khẩu" [(ngModel)]="form.password"></ion-input>
+        <!-- Address Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="location-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Địa chỉ</ion-label>
+          <ion-input
+            type="text"
+            [(ngModel)]="form.address"
+            name="address"
+            placeholder="Nhập địa chỉ (tùy chọn)"
+            [disabled]="isSubmitting">
+          </ion-input>
+        </ion-item>
 
-    <ion-button expand="block" (click)="register()">Tạo tài khoản</ion-button>
-    <p (click)="goLogin()">Đã có tài khoản? Đăng nhập</p>
+        <!-- Gender Select -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="people-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Giới tính</ion-label>
+          <ion-select
+            [(ngModel)]="form.gender"
+            name="gender"
+            placeholder="Chọn giới tính"
+            [disabled]="isSubmitting">
+            <ion-select-option value="Nam">Nam</ion-select-option>
+            <ion-select-option value="Nữ">Nữ</ion-select-option>
+            <ion-select-option value="Khác">Khác</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Date of Birth -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="calendar-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Ngày sinh</ion-label>
+          <ion-datetime
+            presentation="date"
+            [(ngModel)]="form.dob"
+            name="dob"
+            [max]="maxDate"
+            [disabled]="isSubmitting"
+            placeholder="Chọn ngày sinh">
+          </ion-datetime>
+        </ion-item>
+
+        <!-- Submit Button -->
+        <ion-button
+          expand="block"
+          type="submit"
+          class="register-button"
+          [disabled]="isSubmitting || !form.name || !form.email || !form.password">
+          <ion-spinner *ngIf="isSubmitting" name="crescent" class="button-spinner"></ion-spinner>
+          <span *ngIf="!isSubmitting">Tạo tài khoản</span>
+          <span *ngIf="isSubmitting">Đang xử lý...</span>
+        </ion-button>
+      </form>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        <p>
+          Đã có tài khoản?
+          <span class="link-text" (click)="goLogin()">Đăng nhập ngay</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="decoration-top"></div>
+    <div class="decoration-bottom"></div>
   </div>
 </ion-content>

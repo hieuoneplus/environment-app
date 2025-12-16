@@ -1,12 +1,75 @@
-<ion-content class="auth">
-  <div class="card">
-    <h2>Đăng nhập</h2>
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="logo-container">
+        <ion-icon name="leaf" class="logo-icon"></ion-icon>
+      </div>
+      <h1 class="welcome-text">Chào mừng trở lại!</h1>
+      <p class="subtitle">Đăng nhập để tiếp tục hành trình sống xanh</p>
+    </div>
 
-    <ion-input placeholder="Email" [(ngModel)]="email"></ion-input>
-    <ion-input type="password" placeholder="Mật khẩu" [(ngModel)]="password"></ion-input>
+    <!-- Form Section -->
+    <div class="form-container">
+      <form (ngSubmit)="login()">
+        <!-- Email Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="mail-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="Nhập email của bạn"
+            [disabled]="isSubmitting"
+            required>
+          </ion-input>
+        </ion-item>
 
-    <ion-button expand="block" (click)="login()">Đăng nhập</ion-button>
+        <!-- Password Input -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-label position="stacked">Mật khẩu</ion-label>
+          <ion-input
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Nhập mật khẩu"
+            [disabled]="isSubmitting"
+            required>
+          </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            (click)="togglePassword()"
+            class="toggle-password-btn">
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
 
-    <p (click)="goRegister()">Chưa có tài khoản? Đăng ký</p>
+        <!-- Submit Button -->
+        <ion-button
+          expand="block"
+          type="submit"
+          class="login-button"
+          [disabled]="isSubmitting || !email || !password">
+          <ion-spinner *ngIf="isSubmitting" name="crescent" class="button-spinner"></ion-spinner>
+          <span *ngIf="!isSubmitting">Đăng nhập</span>
+          <span *ngIf="isSubmitting">Đang xử lý...</span>
+        </ion-button>
+      </form>
+
+      <!-- Register Link -->
+      <div class="register-link">
+        <p>
+          Chưa có tài khoản?
+          <span class="link-text" (click)="goRegister()">Đăng ký ngay</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Decorative Elements -->
+    <div class="decoration-top"></div>
+    <div class="decoration-bottom"></div>
   </div>
 </ion-content>

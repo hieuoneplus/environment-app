@@ -5,11 +5,21 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host 0.0.0.0",
+    "start:ngrok": "ng serve --host 0.0.0.0 --disable-host-check",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:sync": "npx cap sync",
+    "cap:copy": "npx cap copy",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:run:android": "npx cap run android",
+    "cap:run:ios": "npx cap run ios"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +32,7 @@
     "@angular/platform-browser-dynamic": "^20.0.0",
     "@angular/router": "^20.0.0",
     "@capacitor/app": "8.0.0",
+    "@capacitor/camera": "^8.0.0",
     "@capacitor/core": "8.0.0",
     "@capacitor/haptics": "8.0.0",
     "@capacitor/keyboard": "8.0.0",

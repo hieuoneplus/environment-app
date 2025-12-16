@@ -1,0 +1,211 @@
+.profile-content {
+  --background: #F9FAF9;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  
+  span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1B5E20;
+  }
+}
+
+.profile-header-card {
+  margin: 0 0 20px 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(27, 94, 32, 0.12);
+  background: linear-gradient(135deg, #1B5E20 0%, #2E7D32 100%);
+  
+  ion-card-content {
+    padding: 24px;
+  }
+  
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .profile-avatar {
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      
+      .avatar-text {
+        font-size: 32px;
+        font-weight: 700;
+        color: white;
+      }
+    }
+    
+    .profile-info {
+      flex: 1;
+      
+      .profile-name {
+        color: white;
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+      }
+      
+      .profile-points {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        
+        .trophy-icon {
+          font-size: 20px;
+          color: #FFB300;
+        }
+        
+        .points-text {
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+.info-card {
+  margin: 0 0 20px 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1B5E20;
+    }
+  }
+  
+  .info-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --background: transparent;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #E0E0E0;
+    
+    &:last-child {
+      margin-bottom: 0;
+      border-bottom: none;
+    }
+    
+    .info-icon {
+      font-size: 24px;
+      color: #1B5E20;
+      margin-right: 12px;
+    }
+    
+    ion-label {
+      h3 {
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      p {
+        font-size: 16px;
+        font-weight: 500;
+        color: #1B5E20;
+        margin: 0;
+      }
+    }
+  }
+}
+
+.points-summary-card {
+  margin: 0 0 20px 0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #FFB300 0%, #FFC107 100%);
+  
+  ion-card-content {
+    padding: 20px;
+  }
+  
+  .points-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    .points-icon-large {
+      font-size: 48px;
+    }
+    
+    .points-details {
+      flex: 1;
+      
+      .points-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+      
+      .points-value-large {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.settings-section {
+  margin-top: 24px;
+  
+  .settings-btn {
+    --border-radius: 12px;
+    --border-color: #A8E6CF;
+    --color: #1B5E20;
+    font-weight: 600;
+    height: 48px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 40px 20px;
+  text-align: center;
+  
+  p {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+// Đảm bảo tất cả interactive elements có thể click được
+ion-button,
+ion-item {
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+.profile-content {
+  pointer-events: auto !important;
+  
+  > * {
+    pointer-events: auto !important;
+  }
+}

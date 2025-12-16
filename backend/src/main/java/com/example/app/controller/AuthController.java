@@ -1,8 +1,10 @@
 package com.example.app.controller;
 
+import com.example.app.model.dto.UserProfileDTO;
 import com.example.app.model.rest.LoginRequest;
 import com.example.app.repo.UserRepository;
 import com.example.app.service.AuthService;
+import com.example.app.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,18 +20,22 @@ import com.example.app.model.entity.User;
 public class AuthController {
 
     private final AuthService service;
+    private final ProfileService profileService;
 //    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
 
 //        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.ok(service.register(user));
+        User registeredUser = service.register(user);
+        UserProfileDTO profileDTO = profileService.getProfile(registeredUser.getId());
+        return ResponseEntity.ok(profileDTO);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest req) {
-
-        return ResponseEntity.ok(service.login(req));
+        User user = service.login(req);
+        UserProfileDTO profileDTO = profileService.getProfile(user.getId());
+        return ResponseEntity.ok(profileDTO);
     }
 }
