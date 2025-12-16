@@ -1,0 +1,12 @@
+<ion-content class="auth">
+  <div class="card">
+    <h2>Đăng nhập</h2>
+
+    <ion-input placeholder="Email" [(ngModel)]="email"></ion-input>
+    <ion-input type="password" placeholder="Mật khẩu" [(ngModel)]="password"></ion-input>
+
+    <ion-button expand="block" (click)="login()">Đăng nhập</ion-button>
+
+    <p (click)="goRegister()">Chưa có tài khoản? Đăng ký</p>
+  </div>
+</ion-content>

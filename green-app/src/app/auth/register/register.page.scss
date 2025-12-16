@@ -1,0 +1,13 @@
+.auth {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 90%;
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: white;
+}

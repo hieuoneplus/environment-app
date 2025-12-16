@@ -1,0 +1,18 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { MePage } from './me.page';
+
+describe('Tab2Page', () => {
+  let component: MePage;
+  let fixture: ComponentFixture<MePage>;
+
+  beforeEach(async () => {
+    fixture = TestBed.createComponent(MePage);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

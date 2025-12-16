@@ -1,0 +1,21 @@
+<ion-content class="auth">
+  <div class="card">
+    <h2>Đăng ký</h2>
+
+    <ion-input placeholder="Họ tên" [(ngModel)]="form.name"></ion-input>
+    <ion-input placeholder="Địa chỉ" [(ngModel)]="form.address"></ion-input>
+
+    <ion-select placeholder="Giới tính" [(ngModel)]="form.gender">
+      <ion-select-option value="Nam">Nam</ion-select-option>
+      <ion-select-option value="Nữ">Nữ</ion-select-option>
+    </ion-select>
+
+    <ion-datetime presentation="date" [(ngModel)]="form.dob"></ion-datetime>
+
+    <ion-input placeholder="Email" [(ngModel)]="form.email"></ion-input>
+    <ion-input type="password" placeholder="Mật khẩu" [(ngModel)]="form.password"></ion-input>
+
+    <ion-button expand="block" (click)="register()">Tạo tài khoản</ion-button>
+    <p (click)="goLogin()">Đã có tài khoản? Đăng nhập</p>
+  </div>
+</ion-content>
