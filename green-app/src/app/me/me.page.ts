@@ -86,10 +86,12 @@ export class MePage implements OnInit {
   ngOnInit() {
     this.loadProfile();
     
-    // Subscribe to user changes
+    // Subscribe to user changes to auto-update profile
     this.authService.currentUser$.subscribe(user => {
       if (user) {
-        this.userProfile = user;
+        // Reload profile from backend to get latest rank, points, streak
+        // This ensures we have the most up-to-date data
+        this.loadProfile();
       }
     });
   }
@@ -105,7 +107,10 @@ export class MePage implements OnInit {
       const profile = await firstValueFrom(this.profileService.getProfile(user.id));
       if (profile) {
         this.userProfile = profile;
-        this.authService.setUser(profile);
+        // Only update authService if data has changed (to avoid infinite loop)
+        if (user.rank !== profile.rank || user.greenPoints !== profile.greenPoints || user.streak !== profile.streak) {
+          this.authService.setUser(profile);
+        }
       }
     } catch (error: any) {
       console.error('Error loading profile:', error);
