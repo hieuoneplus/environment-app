@@ -82,10 +82,11 @@ export class RewardPage implements OnInit {
   }
 
   loadUserPoints() {
-    const user = this.authService.currentUser;
-    if (user) {
-      this.userPoints = user.greenPoints;
-    }
+    this.authService.currentUser$.subscribe(user => {
+      if(user) {
+        this.userPoints = user.greenPoints;
+      }
+    });
   }
 
   async loadRewards() {
