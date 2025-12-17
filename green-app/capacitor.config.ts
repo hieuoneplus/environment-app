@@ -14,6 +14,11 @@ const config: CapacitorConfig = {
         camera: 'App cần quyền camera để chụp ảnh và quét mã',
         photos: 'App cần quyền truy cập ảnh để lưu ảnh đã chụp'
       }
+    },
+    Geolocation: {
+      permissions: {
+        location: 'App cần quyền vị trí để hiển thị bản đồ và theo dõi Green Move'
+      }
     }
   }
 };

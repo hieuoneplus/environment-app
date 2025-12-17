@@ -76,6 +76,44 @@ public class DataInitializer implements CommandLineRunner {
             jdbcTemplate.update("UPDATE public.users SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL");
             jdbcTemplate.update("UPDATE public.users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL");
             
+            // Add location_type column if it doesn't exist
+            try {
+                jdbcTemplate.execute(
+                    "DO $$ " +
+                    "BEGIN " +
+                    "  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='locations' AND column_name='location_type') THEN " +
+                    "    ALTER TABLE public.locations ADD COLUMN location_type VARCHAR(50); " +
+                    "  END IF; " +
+                    "END $$;"
+                );
+                log.info("Location type column migration completed");
+            } catch (Exception e) {
+                log.warn("Location type column migration skipped: {}", e.getMessage());
+            }
+
+            // Create move_tracking table if it doesn't exist
+            try {
+                jdbcTemplate.execute(
+                    "CREATE TABLE IF NOT EXISTS public.move_tracking (" +
+                    "  id UUID PRIMARY KEY DEFAULT gen_random_uuid(), " +
+                    "  user_id UUID NOT NULL REFERENCES public.users(id), " +
+                    "  mode VARCHAR(20) NOT NULL, " +
+                    "  start_latitude NUMERIC(10,8), " +
+                    "  start_longitude NUMERIC(11,8), " +
+                    "  end_latitude NUMERIC(10,8), " +
+                    "  end_longitude NUMERIC(11,8), " +
+                    "  distance_km NUMERIC(10,2), " +
+                    "  points_earned INTEGER DEFAULT 0, " +
+                    "  started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, " +
+                    "  ended_at TIMESTAMP, " +
+                    "  is_active BOOLEAN NOT NULL DEFAULT true " +
+                    ");"
+                );
+                log.info("Move tracking table migration completed");
+            } catch (Exception e) {
+                log.warn("Move tracking table migration skipped: {}", e.getMessage());
+            }
+
             // Fix activities table columns if needed
             try {
                 log.info("Checking activities table schema...");
@@ -160,72 +198,155 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeHabits() {
+        // Clear old habits and create new ones
         if (habitRepository.count() == 0) {
+//        habitRepository.deleteAll();
+
             Habit habit1 = new Habit();
-            habit1.setName("Mang bình nước");
+            habit1.setName("Mang bình nước cá nhân");
             habit1.setPoints(50);
-            habit1.setDescription("Mang bình nước cá nhân thay vì mua chai nhựa");
+            habit1.setDescription("Mang bình nước cá nhân thay vì mua chai nhựa dùng một lần");
             habit1.setIconName("water");
             habit1.setIsActive(true);
             habitRepository.save(habit1);
 
             Habit habit2 = new Habit();
-            habit2.setName("Phân loại rác");
-            habit2.setPoints(100);
-            habit2.setDescription("Phân loại rác tái chế và rác thải");
-            habit2.setIconName("trash");
+            habit2.setName("Từ chối túi nilon");
+            habit2.setPoints(30);
+            habit2.setDescription("Từ chối túi nilon khi mua sắm, sử dụng túi tái sử dụng");
+            habit2.setIconName("bag");
             habit2.setIsActive(true);
             habitRepository.save(habit2);
 
             Habit habit3 = new Habit();
-            habit3.setName("Đi xe buýt");
-            habit3.setPoints(75);
-            habit3.setDescription("Sử dụng phương tiện công cộng");
-            habit3.setIconName("bus");
+            habit3.setName("Phân loại rác tại nguồn");
+            habit3.setPoints(100);
+            habit3.setDescription("Phân loại rác tái chế, rác hữu cơ và rác thải khác");
+            habit3.setIconName("trash");
             habit3.setIsActive(true);
             habitRepository.save(habit3);
+
+            Habit habit4 = new Habit();
+            habit4.setName("Không dùng chai nhựa dùng một lần");
+            habit4.setPoints(40);
+            habit4.setDescription("Tránh sử dụng chai nhựa dùng một lần, ưu tiên đồ tái sử dụng");
+            habit4.setIconName("close-circle");
+            habit4.setIsActive(true);
+            habitRepository.save(habit4);
+
+            Habit habit5 = new Habit();
+            habit5.setName("Mang túi tote khi mua sắm");
+            habit5.setPoints(25);
+            habit5.setDescription("Mang túi tote hoặc túi vải khi đi mua sắm");
+            habit5.setIconName("bag-handle");
+            habit5.setIsActive(true);
+            habitRepository.save(habit5);
+
+            Habit habit6 = new Habit();
+            habit6.setName("Ăn chay hoặc giảm thịt");
+            habit6.setPoints(80);
+            habit6.setDescription("Ăn chay hoặc giảm tiêu thụ thịt để bảo vệ môi trường");
+            habit6.setIconName("leaf");
+            habit6.setIsActive(true);
+            habitRepository.save(habit6);
+
+            Habit habit7 = new Habit();
+            habit7.setName("Đi bộ/xe đạp thay xe máy");
+            habit7.setPoints(60);
+            habit7.setDescription("Đi bộ hoặc đạp xe thay vì sử dụng xe máy/ô tô");
+            habit7.setIconName("bicycle");
+            habit7.setIsActive(true);
+            habitRepository.save(habit7);
 
             log.info("Initialized {} habits", habitRepository.count());
         }
     }
 
     private void initializeRewards() {
+        // Clear old rewards and create new ones
         if (rewardRepository.count() == 0) {
+//        rewardRepository.deleteAll();
+
             Reward reward1 = new Reward();
-            reward1.setName("Sen đá mini");
-            reward1.setPoints(500);
-            reward1.setCategory("plant");
-            reward1.setImageEmoji("🌱");
-            reward1.setDescription("Cây sen đá nhỏ xinh để bàn làm việc");
+            reward1.setName("Mã giảm giá 10k (Shopee/Grab/Lazada)");
+            reward1.setPoints(100);
+            reward1.setCategory("ELECTRONIC_VOUCHER");
+            reward1.setImageEmoji("🎫");
+            reward1.setDescription("Mã giảm giá 10.000đ áp dụng cho Shopee, Grab hoặc Lazada");
             reward1.setIsActive(true);
             rewardRepository.save(reward1);
 
             Reward reward2 = new Reward();
-            reward2.setName("Túi vải Canvas");
-            reward2.setPoints(800);
-            reward2.setCategory("plant");
-            reward2.setImageEmoji("👜");
-            reward2.setDescription("Túi vải thân thiện môi trường");
+            reward2.setName("Thẻ nạp điện thoại 20k");
+            reward2.setPoints(200);
+            reward2.setCategory("ELECTRONIC_VOUCHER");
+            reward2.setImageEmoji("📱");
+            reward2.setDescription("Thẻ nạp điện thoại trị giá 20.000đ");
             reward2.setIsActive(true);
             rewardRepository.save(reward2);
 
             Reward reward3 = new Reward();
-            reward3.setName("Voucher 20%");
+            reward3.setName("Voucher Highlands Coffee / Starbucks 30k");
             reward3.setPoints(300);
-            reward3.setCategory("voucher");
-            reward3.setImageEmoji("🎫");
-            reward3.setDescription("Voucher giảm giá 20% tại cửa hàng đối tác");
+            reward3.setCategory("FOOD_DRINK");
+            reward3.setImageEmoji("☕");
+            reward3.setDescription("Voucher 30.000đ tại Highlands Coffee hoặc Starbucks");
             reward3.setIsActive(true);
             rewardRepository.save(reward3);
 
             Reward reward4 = new Reward();
-            reward4.setName("Ống hút tre");
-            reward4.setPoints(200);
-            reward4.setCategory("plant");
+            reward4.setName("Bộ ống hút Inox & cọ rửa (kèm túi vải)");
+            reward4.setPoints(400);
+            reward4.setCategory("PERSONAL_ITEM");
             reward4.setImageEmoji("🥤");
-            reward4.setDescription("Bộ ống hút tre có thể tái sử dụng");
+            reward4.setDescription("Bộ ống hút inox cao cấp kèm cọ rửa và túi vải đựng");
             reward4.setIsActive(true);
             rewardRepository.save(reward4);
+
+            Reward reward5 = new Reward();
+            reward5.setName("Sen đá / Xương rồng để bàn");
+            reward5.setPoints(500);
+            reward5.setCategory("GREEN_GIFT");
+            reward5.setImageEmoji("🌵");
+            reward5.setDescription("Cây sen đá hoặc xương rồng nhỏ xinh để bàn làm việc");
+            reward5.setIsActive(true);
+            rewardRepository.save(reward5);
+
+            Reward reward6 = new Reward();
+            reward6.setName("Túi vải Canvas (Tote bag) thiết kế riêng");
+            reward6.setPoints(600);
+            reward6.setCategory("FASHION");
+            reward6.setImageEmoji("👜");
+            reward6.setDescription("Túi vải Canvas thân thiện môi trường với thiết kế độc quyền");
+            reward6.setIsActive(true);
+            rewardRepository.save(reward6);
+
+            Reward reward7 = new Reward();
+            reward7.setName("Vé tham gia Workshop (Làm nến/Tái chế)");
+            reward7.setPoints(800);
+            reward7.setCategory("EXPERIENCE");
+            reward7.setImageEmoji("🕯️");
+            reward7.setDescription("Vé tham gia workshop làm nến hoặc tái chế đồ dùng");
+            reward7.setIsActive(true);
+            rewardRepository.save(reward7);
+
+            Reward reward8 = new Reward();
+            reward8.setName("Quyên góp 01 cây rừng (Dự án Trồng Rừng)");
+            reward8.setPoints(1000);
+            reward8.setCategory("SOCIAL_IMPACT");
+            reward8.setImageEmoji("🌲");
+            reward8.setDescription("Quyên góp 1 cây rừng cho dự án trồng rừng bảo vệ môi trường");
+            reward8.setIsActive(true);
+            rewardRepository.save(reward8);
+
+            Reward reward9 = new Reward();
+            reward9.setName("Bình giữ nhiệt Inox cao cấp (500ml)");
+            reward9.setPoints(1500);
+            reward9.setCategory("PERSONAL_ITEM");
+            reward9.setImageEmoji("🧊");
+            reward9.setDescription("Bình giữ nhiệt inox cao cấp dung tích 500ml, giữ nhiệt 12-24 giờ");
+            reward9.setIsActive(true);
+            rewardRepository.save(reward9);
 
             log.info("Initialized {} rewards", rewardRepository.count());
         }
@@ -233,25 +354,74 @@ public class DataInitializer implements CommandLineRunner {
 
     private void initializeLocations() {
         if (locationRepository.count() == 0) {
-            Location location1 = new Location();
-            location1.setName("Sạp Chàng Sen");
-            location1.setAddress("123 Đường ABC, Quận 1, TP.HCM");
-            location1.setLatitude(new BigDecimal("10.7769"));
-            location1.setLongitude(new BigDecimal("106.7009"));
-            location1.setPointsAvailable(50);
-            location1.setDescription("Cửa hàng thân thiện môi trường");
-            location1.setIsActive(true);
-            locationRepository.save(location1);
+            // Trạm tái chế
+            Location recycle1 = new Location();
+            recycle1.setName("Trạm Tái Chế Quận Cầu giấy 1");
+            recycle1.setAddress("76-82 Trần Quốc Vượng, Dịch Vọng Hậu, Cầu Giấy, Hà Nội, Việt Nam");
+            recycle1.setLatitude(new BigDecimal("21.034281"));
+            recycle1.setLongitude(new BigDecimal("105.783358"));
+            recycle1.setPointsAvailable(100);
+            recycle1.setDescription("Thu gom vỏ hộp sữa, chai nhựa");
+            recycle1.setLocationType("RECYCLE_STATION");
+            recycle1.setIsActive(true);
+            locationRepository.save(recycle1);
 
-            Location location2 = new Location();
-            location2.setName("Trạm Xe Buýt Số 1");
-            location2.setAddress("456 Đường XYZ, Quận 2, TP.HCM");
-            location2.setLatitude(new BigDecimal("10.7869"));
-            location2.setLongitude(new BigDecimal("106.7109"));
-            location2.setPointsAvailable(75);
-            location2.setDescription("Check-in khi sử dụng xe buýt");
-            location2.setIsActive(true);
-            locationRepository.save(location2);
+            Location recycle2 = new Location();
+            recycle2.setName("Trạm Tái Chế Quận Cầu giấy 2");
+            recycle2.setAddress("36 Xuân Thủy, Dịch Vọng Hậu, Cầu Giấy, Hà Nội");
+            recycle2.setLatitude(new BigDecimal("21.036688"));
+            recycle2.setLongitude(new BigDecimal("105.787092"));
+            recycle2.setPointsAvailable(100);
+            recycle2.setDescription("Thu gom vỏ hộp sữa, chai nhựa");
+            recycle2.setLocationType("RECYCLE_STATION");
+            recycle2.setIsActive(true);
+            locationRepository.save(recycle2);
+
+            // Điểm thu gom pin
+            Location battery1 = new Location();
+            battery1.setName("Điểm Thu Gom Pin Quận Cầu giấy 1");
+            battery1.setAddress("77 Trần Quốc Hoàn, Dịch Vọng Hậu, Cầu Giấy, Hà Nội");
+            battery1.setLatitude(new BigDecimal("21.041786"));
+            battery1.setLongitude(new BigDecimal("105.783688"));
+            battery1.setPointsAvailable(150);
+            battery1.setDescription("Thu gom pin điện tử, pin cũ");
+            battery1.setLocationType("BATTERY_COLLECTION");
+            battery1.setIsActive(true);
+            locationRepository.save(battery1);
+
+            Location battery2 = new Location();
+            battery2.setName("Điểm Thu Gom Pin Quận Cầu giấy 2");
+            battery2.setAddress("89 Đ. Nguyễn Phong Sắc, Dịch Vọng Hậu, Cầu Giấy, Hà Nội");
+            battery2.setLatitude(new BigDecimal("21.039112"));
+            battery2.setLongitude(new BigDecimal("105.790340"));
+            battery2.setPointsAvailable(150);
+            battery2.setDescription("Thu gom pin điện tử, pin cũ");
+            battery2.setLocationType("BATTERY_COLLECTION");
+            battery2.setIsActive(true);
+            locationRepository.save(battery2);
+
+            // Cửa hàng Xanh
+            Location store1 = new Location();
+            store1.setName("Cửa Hàng Xanh Green Wave");
+            store1.setAddress("241 Đ. Xuân Thủy, Dịch Vọng Hậu, Cầu Giấy, Hà Nội");
+            store1.setLatitude(new BigDecimal("21.035914"));
+            store1.setLongitude(new BigDecimal("105.783046"));
+            store1.setPointsAvailable(200);
+            store1.setDescription("Đổi điểm GP lấy voucher, sản phẩm xanh");
+            store1.setLocationType("GREEN_STORE");
+            store1.setIsActive(true);
+            locationRepository.save(store1);
+
+            Location store2 = new Location();
+            store2.setName("Cửa Hàng Xanh Eco Shop");
+            store2.setAddress("P. Phan Văn Trường, Dịch Vọng Hậu, Cầu Giấy, Hà Nội");
+            store2.setLatitude(new BigDecimal("21.036958"));
+            store2.setLongitude(new BigDecimal("105.785976"));
+            store2.setPointsAvailable(200);
+            store2.setDescription("Đổi điểm GP lấy voucher, sản phẩm xanh");
+            store2.setLocationType("GREEN_STORE");
+            store2.setIsActive(true);
+            locationRepository.save(store2);
 
             log.info("Initialized {} locations", locationRepository.count());
         }

@@ -33,4 +33,17 @@ public class HabitController {
             throw new IllegalArgumentException("Invalid UUID format: " + e.getMessage());
         }
     }
+
+    @PostMapping("/{habitId}/subscribe")
+    public ResponseEntity<HabitDTO> subscribeToHabit(
+            @RequestParam("userId") String userId,
+            @PathVariable("habitId") String habitId) {
+        try {
+            UUID userIdUUID = UUID.fromString(userId);
+            UUID habitIdUUID = UUID.fromString(habitId);
+            return ResponseEntity.ok(habitService.subscribeToHabit(userIdUUID, habitIdUUID));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid UUID format: " + e.getMessage());
+        }
+    }
 }

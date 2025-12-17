@@ -21,14 +21,15 @@
   --padding-start: 0;
   --padding-end: 0;
   --padding-top: 0;
-  --padding-bottom: 0;
+  --padding-bottom: 80px; // Add padding to prevent content from being hidden behind tabs
 }
 
 .camera-container {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
+  padding-bottom: 20px; // Extra padding to ensure content is scrollable
 }
 
 .camera-view {
@@ -204,10 +205,11 @@
 }
 
 .manual-selection {
-  padding: 20px 16px;
+  padding: 20px 16px 100px 16px; // Add bottom padding to prevent being hidden behind tabs
   background: rgba(255, 255, 255, 0.95);
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
+  margin-bottom: 20px; // Extra margin for safety
   
   .manual-label {
     margin: 0 0 12px 0;
@@ -231,6 +233,7 @@
       border-radius: 20px;
       cursor: pointer;
       transition: all 0.2s;
+      min-width: fit-content;
       
       &:active {
         --background: #1B5E20;

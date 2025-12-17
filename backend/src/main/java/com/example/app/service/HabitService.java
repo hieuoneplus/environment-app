@@ -74,6 +74,41 @@ public class HabitService {
         return dto;
     }
 
+    @Transactional
+    public HabitDTO subscribeToHabit(UUID userId, UUID habitId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new RuntimeException("Habit not found"));
+
+        LocalDate today = LocalDate.now();
+        
+        // Check if already subscribed (has any UserHabit record for this habit)
+        boolean alreadySubscribed = userHabitRepository
+                .findByUserIdAndHabitIdAndDate(userId, habitId, today)
+                .isPresent();
+        
+        if (alreadySubscribed) {
+            // Already subscribed, just return the habit
+            return toDTO(habit);
+        }
+
+        // Create UserHabit record with completed = false (just subscribe, don't complete)
+        UserHabit userHabit = new UserHabit();
+        userHabit.setUser(user);
+        userHabit.setHabit(habit);
+        userHabit.setActivityDate(today);
+        userHabit.setCompleted(false);
+        userHabit.setPointsAwarded(0);
+        
+        userHabitRepository.save(userHabit);
+
+        HabitDTO dto = toDTO(habit);
+        dto.setCompleted(false);
+        return dto;
+    }
+
     private HabitDTO toDTO(Habit habit) {
         return new HabitDTO(
                 habit.getId(),

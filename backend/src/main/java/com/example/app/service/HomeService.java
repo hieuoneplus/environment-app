@@ -51,19 +51,27 @@ public class HomeService {
     private String getGreeting() {
         int hour = java.time.LocalTime.now().getHour();
         if (hour < 12) {
-            return "sáng lành";
+            return "buổi sáng";
         } else if (hour < 18) {
-            return "chiều tốt";
+            return "buổi chiều";
         } else {
-            return "tối tốt";
+            return "buổi tối";
         }
     }
 
     private List<HabitDTO> getTodayHabits(UUID userId) {
         LocalDate today = LocalDate.now();
-        List<Habit> allHabits = habitRepository.findByIsActiveTrue();
         
-        return allHabits.stream().map(habit -> {
+        // Only get habits that user has subscribed to (has at least one UserHabit record)
+        List<UUID> subscribedHabitIds = userHabitRepository.findSubscribedHabitIdsByUserId(userId);
+        
+        if (subscribedHabitIds.isEmpty()) {
+            return List.of(); // Return empty list if no habits subscribed
+        }
+        
+        List<Habit> subscribedHabits = habitRepository.findAllById(subscribedHabitIds);
+        
+        return subscribedHabits.stream().map(habit -> {
             UserHabit userHabit = userHabitRepository
                     .findByUserIdAndHabitIdAndDate(userId, habit.getId(), today)
                     .orElse(null);

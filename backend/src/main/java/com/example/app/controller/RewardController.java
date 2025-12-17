@@ -1,6 +1,7 @@
 package com.example.app.controller;
 
 import com.example.app.model.dto.RewardDTO;
+import com.example.app.model.dto.UserRewardDTO;
 import com.example.app.model.entity.UserReward;
 import com.example.app.service.RewardService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,16 @@ public class RewardController {
             return ResponseEntity.ok(rewardService.exchangeReward(userIdUUID, rewardIdUUID));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid UUID format: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/my-rewards")
+    public ResponseEntity<List<UserRewardDTO>> getUserRewards(@RequestParam("userId") String userId) {
+        try {
+            UUID userIdUUID = UUID.fromString(userId);
+            return ResponseEntity.ok(rewardService.getUserRewards(userIdUUID));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid userId format: " + userId);
         }
     }
 }

@@ -1,0 +1,281 @@
+.maps-content {
+  --background: #f5f5f5;
+  position: relative;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  position: relative;
+  // Ensure map container is always visible and properly sized
+  min-height: 100%;
+  display: block;
+}
+
+.permission-help-btn {
+  position: absolute;
+  top: 60px;
+  right: 16px;
+  z-index: 1000;
+  --background: white;
+  --color: #1B5E20;
+  --border-color: #1B5E20;
+  --border-width: 2px;
+  font-size: 12px;
+  height: 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+// Leaflet map styles
+:host ::ng-deep {
+  .leaflet-container {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .user-location-marker {
+    background: transparent;
+    border: none;
+    
+    .user-marker-pulse {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #4CAF50;
+      opacity: 0.6;
+      animation: pulse 2s infinite;
+    }
+    
+    .user-marker-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #4CAF50;
+      border: 2px solid white;
+      top: 4px;
+      left: 4px;
+    }
+  }
+
+  .location-marker {
+    background: transparent;
+    border: none;
+    
+    .location-marker-pin {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  .location-popup {
+    h3 {
+      margin: 0 0 8px 0;
+      color: #1B5E20;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 4px 0;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    strong {
+      color: #1B5E20;
+      font-size: 16px;
+    }
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.header-content {
+  span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1B5E20;
+  }
+}
+
+.filter-section {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  
+  .filter-chip {
+    --background: white;
+    --color: #666;
+    border: 2px solid #E0E0E0;
+    font-size: 12px;
+    white-space: nowrap;
+    
+    &.selected {
+      --background: #1B5E20;
+      --color: white;
+      border-color: #1B5E20;
+    }
+    
+    ion-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+.tracking-card {
+  position: absolute;
+  top: 120px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  
+  .tracking-info {
+    .tracking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      
+      h3 {
+        margin: 0;
+        color: #1B5E20;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+    
+    .tracking-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #E0E0E0;
+        
+        &:last-child {
+          border-bottom: none;
+        }
+        
+        &.highlight {
+          background: linear-gradient(135deg, #E8F5E9 0%, #F1F8F4 100%);
+          padding: 12px;
+          border-radius: 8px;
+          margin-top: 4px;
+          border: 2px solid #C8E6C9;
+        }
+        
+        .stat-label {
+          font-size: 14px;
+          color: #666;
+          font-weight: 500;
+        }
+        
+        .stat-value {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1B5E20;
+        }
+      }
+    }
+  }
+}
+
+.locations-summary-card {
+  position: absolute;
+  bottom: 100px;
+  left: 16px;
+  right: 16px;
+  z-index: 1000;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1B5E20;
+    }
+  }
+  
+  .locations-count {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    ion-badge {
+      font-size: 18px;
+      padding: 8px 12px;
+    }
+    
+    span {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+}
+
+ion-fab {
+  z-index: 1001;
+  
+  ion-fab-button {
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// Responsive
+@media (max-width: 360px) {
+  .filter-section {
+    padding: 8px 12px;
+    
+    .filter-chip {
+      font-size: 11px;
+      padding: 6px 10px;
+    }
+  }
+  
+  .tracking-card,
+  .locations-summary-card {
+    left: 8px;
+    right: 8px;
+  }
+}

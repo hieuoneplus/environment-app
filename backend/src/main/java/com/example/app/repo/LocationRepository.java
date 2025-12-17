@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface LocationRepository extends JpaRepository<Location, UUID> {
     
     List<Location> findByIsActiveTrue();
+    List<Location> findByIsActiveTrueAndLocationType(String locationType);
     
     // Note: For production, consider using PostGIS extension for PostgreSQL
     // for efficient geospatial queries. For now, we'll filter in service layer.

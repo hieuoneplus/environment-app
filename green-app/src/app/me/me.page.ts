@@ -12,7 +12,8 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
-  IonAvatar
+  IonAvatar,
+  ModalController
 } from '@ionic/angular/standalone';
 import { Router } from "@angular/router";
 import { addIcons } from 'ionicons';
@@ -25,12 +26,15 @@ import {
   trophy,
   logOutOutline,
   settingsOutline,
-  flame
+  flame,
+  gift
 } from 'ionicons/icons';
 import {DecimalPipe, CommonModule, DatePipe} from "@angular/common";
 import { AuthService, UserProfile } from '../core/services/auth.service';
 import { ProfileService } from '../core/services/profile.service';
 import { firstValueFrom } from 'rxjs';
+import { EditProfileModal } from './edit-profile-modal.component';
+import { MyRewardsModal } from './my-rewards-modal.component';
 
 @Component({
   selector: 'app-me',
@@ -62,7 +66,8 @@ export class MePage implements OnInit {
   constructor(
     private authService: AuthService,
     private profileService: ProfileService,
-    private router: Router
+    private router: Router,
+    private modalController: ModalController
   ) {
     addIcons({
       person,
@@ -73,7 +78,8 @@ export class MePage implements OnInit {
       trophy,
       logOutOutline,
       settingsOutline,
-      flame
+      flame,
+      gift
     });
   }
 
@@ -150,5 +156,40 @@ export class MePage implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  async openSettings() {
+    if (!this.userProfile) {
+      return;
+    }
+
+    const modal = await this.modalController.create({
+      component: EditProfileModal,
+      componentProps: {
+        profile: this.userProfile
+      },
+      cssClass: 'edit-profile-modal'
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.updated) {
+      // Reload profile
+      await this.loadProfile();
+      // Update auth service with new profile
+      if (data.profile) {
+        this.authService.setUser(data.profile);
+      }
+    }
+  }
+
+  async openMyRewards() {
+    const modal = await this.modalController.create({
+      component: MyRewardsModal,
+      cssClass: 'my-rewards-modal'
+    });
+
+    await modal.present();
   }
 }

@@ -62,9 +62,19 @@ export class RewardPage implements OnInit {
 
   categories = [
     { value: 'all', label: 'Tất cả' },
-    { value: 'voucher', label: 'Voucher' },
-    { value: 'plant', label: 'Cây xanh' }
+    { value: 'ELECTRONIC_VOUCHER', label: 'Voucher điện tử' },
+    { value: 'FOOD_DRINK', label: 'Ăn uống' },
+    { value: 'PERSONAL_ITEM', label: 'Đồ dùng cá nhân' },
+    { value: 'GREEN_GIFT', label: 'Quà tặng xanh' },
+    { value: 'FASHION', label: 'Thời trang' },
+    { value: 'EXPERIENCE', label: 'Trải nghiệm' },
+    { value: 'SOCIAL_IMPACT', label: 'Tác động xã hội' }
   ];
+
+  getCategoryLabel(category: string): string {
+    const cat = this.categories.find(c => c.value === category);
+    return cat ? cat.label : category;
+  }
 
   constructor(
     private authService: AuthService,

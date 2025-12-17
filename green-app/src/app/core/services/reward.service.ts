@@ -14,6 +14,15 @@ export interface RewardDTO {
   canAfford: boolean;
 }
 
+export interface UserRewardDTO {
+  id: string;
+  reward: RewardDTO;
+  pointsSpent: number;
+  status: string; // PENDING, REDEEMED, EXPIRED
+  redeemedAt?: string;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +45,12 @@ export class RewardService {
 
   exchangeReward(userId: string, rewardId: string): Observable<any> {
     return this.http.post(`${this.base}/api/rewards/${rewardId}/exchange`, null, {
+      params: { userId }
+    });
+  }
+
+  getUserRewards(userId: string): Observable<UserRewardDTO[]> {
+    return this.http.get<UserRewardDTO[]>(`${this.base}/api/rewards/my-rewards`, {
       params: { userId }
     });
   }

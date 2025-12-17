@@ -1,6 +1,7 @@
 package com.example.app.service;
 
 import com.example.app.model.dto.RewardDTO;
+import com.example.app.model.dto.UserRewardDTO;
 import com.example.app.model.entity.Reward;
 import com.example.app.model.entity.User;
 import com.example.app.model.entity.UserReward;
@@ -89,6 +90,39 @@ public class RewardService {
         }
 
         return userRewardRepository.save(userReward);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserRewardDTO> getUserRewards(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return userRewardRepository.findByUserId(userId).stream()
+                .map(this::toUserRewardDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserRewardDTO toUserRewardDTO(UserReward userReward) {
+        Reward reward = userReward.getReward();
+        RewardDTO rewardDTO = new RewardDTO(
+                reward.getId(),
+                reward.getName(),
+                reward.getPoints(),
+                reward.getCategory(),
+                reward.getImageUrl(),
+                reward.getImageEmoji(),
+                reward.getDescription(),
+                false // Not relevant for exchanged rewards
+        );
+
+        return new UserRewardDTO(
+                userReward.getId(),
+                rewardDTO,
+                userReward.getPointsSpent(),
+                userReward.getStatus(),
+                userReward.getRedeemedAt(),
+                userReward.getCreatedAt()
+        );
     }
 
     private RewardDTO toDTO(Reward reward, Integer userPoints) {

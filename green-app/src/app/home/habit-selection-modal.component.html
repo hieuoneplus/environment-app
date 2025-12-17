@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Chọn thói quen mới</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="habit-selection-content">
+  <div *ngIf="isLoading" class="loading-container">
+    <p>Đang tải...</p>
+  </div>
+
+  <div *ngIf="!isLoading && availableHabits.length === 0" class="empty-container">
+    <ion-icon name="checkmark-circle" class="empty-icon"></ion-icon>
+    <p>Bạn đã thêm tất cả thói quen có sẵn!</p>
+  </div>
+
+  <div *ngIf="!isLoading && availableHabits.length > 0" class="habits-list">
+    <ion-item 
+      *ngFor="let habit of availableHabits" 
+      button
+      (click)="selectHabit(habit)"
+      class="habit-option-item">
+      <ion-icon [name]="getIconName(habit.iconName)" slot="start" class="habit-icon"></ion-icon>
+      <ion-label>
+        <h3>{{habit.name}}</h3>
+        <p>{{habit.description}}</p>
+      </ion-label>
+      <ion-badge slot="end" color="success">+{{habit.points}} GP</ion-badge>
+    </ion-item>
+  </div>
+</ion-content>

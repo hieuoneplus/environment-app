@@ -1,7 +1,7 @@
 import { Component, EnvironmentInjector, inject, AfterViewInit } from '@angular/core';
 import {IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonRouterOutlet} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import {triangle, ellipse, square, gift, camera, person, home} from 'ionicons/icons';
+import {triangle, ellipse, square, gift, camera, person, home, mapOutline} from 'ionicons/icons';
 import {RouterModule} from "@angular/router";
 
 @Component({
@@ -14,7 +14,7 @@ export class TabsPage implements AfterViewInit {
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor() {
-    addIcons({ home, camera, gift, person });
+    addIcons({ home, camera, gift, person, mapOutline });
   }
 
   ngAfterViewInit() {

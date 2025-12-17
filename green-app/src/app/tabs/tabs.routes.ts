@@ -12,6 +12,11 @@ export const routes: Routes = [
           import('../home/home.page').then((m) => m.HomePage),
       },
       {
+        path: 'maps',
+        loadComponent: () =>
+          import('../maps/maps.page').then((m) => m.MapsPage),
+      },
+      {
         path: 'camera',
         loadComponent: () =>
           import('../camera/camera.page').then((m) => m.CameraPage),

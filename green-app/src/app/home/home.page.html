@@ -4,11 +4,8 @@
       <div class="header-content">
         <span class="greeting">👋 Chào {{currentTime}}, {{userName}}!</span>
         <div class="header-actions">
-          <ion-button fill="clear" size="small">
+          <ion-button fill="clear" size="small" (click)="openContactDialog()">
             <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" size="small">
-            <ion-icon name="settings-outline" slot="icon-only"></ion-icon>
           </ion-button>
         </div>
       </div>

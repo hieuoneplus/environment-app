@@ -22,7 +22,7 @@ import {
   trash,
   water,
   bus,
-  checkmarkCircle
+  checkmarkCircle, leaf, bicycle, bag, trophy, calendar, closeCircle, bagHandle
 } from 'ionicons/icons';
 
 // Import Capacitor Camera đúng chuẩn
@@ -62,9 +62,13 @@ export class CameraPage implements OnInit {
   isProcessing: boolean = false;
 
   manualOptions = [
-    { id: 'water', name: 'Bình nước', icon: 'trash', detectedObject: 'water' },
-    { id: 'trash', name: 'Rác', icon: 'trash', detectedObject: 'trash' },
-    { id: 'bus', name: 'Xe buýt', icon: 'bus', detectedObject: 'bus' }
+    { id: 'recycle', name: 'Phân Loại Rác', icon: 'trash', detectedObject: 'recycle' },
+    { id: 'water_bottle', name: 'Sử Dụng Bình Nước Cá Nhân', icon: 'water', detectedObject: 'water_bottle' },
+    { id: 'plant_care', name: 'Chăm Sóc Cây', icon: 'leaf', detectedObject: 'plant_care' },
+    { id: 'green_move', name: 'Di Chuyển Xanh', icon: 'bicycle', detectedObject: 'green_move' },
+    { id: 'sustainable_shopping', name: 'Mua Sắm Bền Vững', icon: 'bag', detectedObject: 'sustainable_shopping' },
+    { id: 'event', name: 'Tham Gia Sự Kiện', icon: 'calendar', detectedObject: 'event' },
+    { id: 'challenge', name: 'Thử Thách Tuần/Tháng', icon: 'trophy', detectedObject: 'challenge' }
   ];
 
   constructor(
@@ -80,7 +84,14 @@ export class CameraPage implements OnInit {
       trash,
       water,
       bus,
-      checkmarkCircle
+      checkmarkCircle,
+      leaf,
+      bicycle,
+      bag,
+      calendar,
+      trophy,
+      closeCircle,
+      bagHandle
     });
   }
 
@@ -108,17 +119,25 @@ export class CameraPage implements OnInit {
           const detection = await firstValueFrom(
             this.activityService.detectObject(this.capturedImage)
           );
-          
+
           if (detection && detection.detectedObject) {
             // Map detected object to Vietnamese name
             const objectMap: { [key: string]: string } = {
-              'water': 'Bình nước',
-              'trash': 'Rác',
-              'bus': 'Xe buýt',
-              'plant': 'Cây xanh',
-              'bike': 'Xe đạp'
+              'recycle': 'Phân Loại Rác',
+              'water_bottle': 'Sử Dụng Bình Nước Cá Nhân',
+              'plant_care': 'Chăm Sóc Cây',
+              'green_move': 'Di Chuyển Xanh',
+              'sustainable_shopping': 'Mua Sắm Bền Vững',
+              'event': 'Tham Gia Sự Kiện',
+              'challenge': 'Thử Thách Tuần/Tháng',
+              // Legacy mappings for backward compatibility
+              'water': 'Sử Dụng Bình Nước Cá Nhân',
+              'trash': 'Phân Loại Rác',
+              'bus': 'Di Chuyển Xanh',
+              'plant': 'Chăm Sóc Cây',
+              'bike': 'Di Chuyển Xanh'
             };
-            
+
             this.detectedObject = objectMap[detection.detectedObject] || detection.detectedObject;
             this.showToast(`AI đã nhận diện: ${this.detectedObject}`, 'success');
           } else {
@@ -168,15 +187,23 @@ export class CameraPage implements OnInit {
     try {
       // Map Vietnamese name back to English for backend
       const objectMap: { [key: string]: string } = {
-        'Bình nước': 'water',
-        'Rác': 'trash',
-        'Xe buýt': 'bus',
-        'Cây xanh': 'plant',
-        'Xe đạp': 'bike'
+        'Phân Loại Rác': 'recycle',
+        'Sử Dụng Bình Nước Cá Nhân': 'water_bottle',
+        'Chăm Sóc Cây': 'plant_care',
+        'Di Chuyển Xanh': 'green_move',
+        'Mua Sắm Bền Vững': 'sustainable_shopping',
+        'Tham Gia Sự Kiện': 'event',
+        'Thử Thách Tuần/Tháng': 'challenge',
+        // Legacy mappings
+        'Bình nước': 'water_bottle',
+        'Rác': 'recycle',
+        'Xe buýt': 'green_move',
+        'Cây xanh': 'plant_care',
+        'Xe đạp': 'green_move'
       };
-      
+
       const backendObject = objectMap[finalDetectedObject] || finalDetectedObject.toLowerCase();
-      
+
       const activity = await firstValueFrom(this.activityService.recordActivity(user.id, {
         activityType: 'SCAN',
         detectedObject: backendObject,

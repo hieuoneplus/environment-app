@@ -42,6 +42,8 @@ import { HomeService, HabitDTO, LocationDTO } from '../core/services/home.servic
 import { HabitService } from '../core/services/habit.service';
 import { firstValueFrom } from 'rxjs';
 import { Subscription } from 'rxjs';
+import { HabitSelectionModal } from './habit-selection-modal.component';
+import {ContactDialogComponent} from "./contact-dialog.component";
 
 @Component({
   selector: 'app-home',
@@ -84,7 +86,8 @@ export class HomePage implements OnInit, OnDestroy {
     private homeService: HomeService,
     private habitService: HabitService,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private modalController: ModalController
   ) {
     addIcons({
       notificationsOutline,
@@ -105,7 +108,7 @@ export class HomePage implements OnInit, OnDestroy {
     // Đảm bảo isLoading được set đúng
     this.isLoading = false;
     this.loadDashboard();
-    
+
     // Subscribe to user changes to auto-update dashboard
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
       if (user) {
@@ -145,7 +148,7 @@ export class HomePage implements OnInit, OnDestroy {
         this.streak = dashboard.streak ?? user.streak ?? 0;
         this.habits = dashboard.todayHabits || [];
         this.nearbyLocations = dashboard.nearbyLocations || [];
-        
+
         // Update local user data to keep in sync
         if (user.greenPoints !== dashboard.greenPoints) {
           user.greenPoints = dashboard.greenPoints;
@@ -153,11 +156,11 @@ export class HomePage implements OnInit, OnDestroy {
           user.streak = dashboard.streak;
           this.authService.setUser(user);
         }
-        
-        console.log('Dashboard loaded successfully:', { 
-          userName: this.userName, 
+
+        console.log('Dashboard loaded successfully:', {
+          userName: this.userName,
           greenPoints: this.greenPoints,
-          habitsCount: this.habits.length 
+          habitsCount: this.habits.length
         });
       } else {
         // Fallback to user data if dashboard is null
@@ -207,12 +210,12 @@ export class HomePage implements OnInit, OnDestroy {
         if (index !== -1) {
           this.habits[index] = updatedHabit;
         }
-        
+
         // Reload dashboard to get updated points
         await this.loadDashboard();
         this.showToast(
-          updatedHabit.completed 
-            ? `Đã hoàn thành! +${updatedHabit.points} điểm` 
+          updatedHabit.completed
+            ? `Đã hoàn thành! +${updatedHabit.points} điểm`
             : 'Đã hủy thói quen',
           'success'
         );
@@ -225,9 +228,64 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  addHabit() {
-    // TODO: Implement habit selection modal
-    this.showToast('Tính năng đang phát triển', 'warning');
+  async addHabit() {
+    const modal = await this.modalController.create({
+      component: HabitSelectionModal,
+      componentProps: {
+        currentHabits: this.habits.map(h => h.id),
+        allHabits: []
+      },
+      cssClass: 'habit-selection-modal'
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.selected && data.habit) {
+      // Subscribe to the selected habit
+      await this.subscribeToHabit(data.habit);
+    }
+  }
+
+  async subscribeToHabit(habit: any) {
+    const user = this.authService.currentUser;
+    if (!user) {
+      return;
+    }
+
+    // Check if habit is already in the list
+    const existingHabit = this.habits.find(h => h.id === habit.id);
+    if (existingHabit) {
+      this.showToast('Thói quen này đã được thêm rồi!', 'warning');
+      return;
+    }
+
+    const loading = await this.loadingController.create({
+      message: 'Đang thêm thói quen...'
+    });
+    await loading.present();
+
+    try {
+      // Call backend to subscribe (create a UserHabit record for today with completed = false)
+      await firstValueFrom(this.habitService.subscribeToHabit(user.id, habit.id));
+      // Reload dashboard to show the new habit
+      await this.loadDashboard();
+      this.showToast(`Đã thêm thói quen: ${habit.name}`, 'success');
+    } catch (error: any) {
+      console.error('Error subscribing to habit:', error);
+      this.showToast('Lỗi: ' + (error?.error?.message || error.message), 'danger');
+    } finally {
+      await loading.dismiss();
+    }
+  }
+
+  async openContactDialog() {
+    const modal = await this.modalController.create({
+      component: ContactDialogComponent,
+      cssClass: 'contact-dialog-modal'
+    });
+
+    await modal.present();
   }
 
   async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success') {

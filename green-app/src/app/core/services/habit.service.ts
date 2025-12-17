@@ -21,4 +21,10 @@ export class HabitService {
       params: { userId }
     });
   }
+
+  subscribeToHabit(userId: string, habitId: string): Observable<HabitDTO> {
+    return this.http.post<HabitDTO>(`${this.base}/api/habits/${habitId}/subscribe`, null, {
+      params: { userId }
+    });
+  }
 }

@@ -179,7 +179,14 @@
   }
 }
 
-.settings-section {
+.action-buttons-section {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-btn {
   margin-top: 24px;
   
   .settings-btn {

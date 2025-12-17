@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Phần quà đã đổi</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="my-rewards-content">
+  <div *ngIf="isLoading" class="loading-container">
+    <p>Đang tải...</p>
+  </div>
+
+  <div *ngIf="!isLoading && userRewards.length === 0" class="empty-container">
+    <ion-icon name="gift" class="empty-icon"></ion-icon>
+    <p>Bạn chưa đổi phần quà nào</p>
+  </div>
+
+  <div *ngIf="!isLoading && userRewards.length > 0" class="rewards-list">
+    <ion-card *ngFor="let userReward of userRewards" class="reward-item-card">
+      <ion-card-content>
+        <div class="reward-item-header">
+          <div class="reward-emoji">{{userReward.reward.imageEmoji || '🎁'}}</div>
+          <div class="reward-info">
+            <h3 class="reward-name">{{userReward.reward.name}}</h3>
+            <div class="reward-meta">
+              <span class="points-spent">-{{userReward.pointsSpent | number}} GP</span>
+              <ion-badge [color]="getStatusColor(userReward.status)" class="status-badge">
+                <ion-icon [name]="getStatusIcon(userReward.status)"></ion-icon>
+                {{getStatusLabel(userReward.status)}}
+              </ion-badge>
+            </div>
+          </div>
+        </div>
+        
+        <div class="reward-details" *ngIf="userReward.reward.description">
+          <p>{{userReward.reward.description}}</p>
+        </div>
+
+        <div class="reward-footer">
+          <div class="date-info">
+            <ion-icon name="time"></ion-icon>
+            <span>Đổi ngày: {{formatDate(userReward.createdAt)}}</span>
+          </div>
+          <div class="date-info" *ngIf="userReward.redeemedAt">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Sử dụng: {{formatDate(userReward.redeemedAt)}}</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

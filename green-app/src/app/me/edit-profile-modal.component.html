@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Chỉnh sửa hồ sơ</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="edit-profile-content">
+  <div class="form-container">
+    <!-- Name -->
+    <ion-item class="form-item" lines="none">
+      <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-label position="stacked">Họ và tên *</ion-label>
+      <ion-input
+        [(ngModel)]="form.name"
+        name="name"
+        placeholder="Nhập họ và tên"
+        [disabled]="isSubmitting"
+        required>
+      </ion-input>
+    </ion-item>
+
+    <!-- Address -->
+    <ion-item class="form-item" lines="none">
+      <ion-icon name="location-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-label position="stacked">Địa chỉ</ion-label>
+      <ion-input
+        [(ngModel)]="form.address"
+        name="address"
+        placeholder="Nhập địa chỉ"
+        [disabled]="isSubmitting">
+      </ion-input>
+    </ion-item>
+
+    <!-- Gender -->
+    <ion-item class="form-item" lines="none">
+      <ion-icon name="people-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-label position="stacked">Giới tính</ion-label>
+      <ion-select
+        [(ngModel)]="form.gender"
+        name="gender"
+        placeholder="Chọn giới tính"
+        [disabled]="isSubmitting"
+        interface="popover"
+        (ionChange)="onGenderChange($event)">
+        <ion-select-option value="Nam">Nam</ion-select-option>
+        <ion-select-option value="Nữ">Nữ</ion-select-option>
+        <ion-select-option value="Khác">Khác</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Date of Birth -->
+    <ion-item class="form-item" lines="none">
+      <ion-icon name="calendar-outline" slot="start" class="input-icon"></ion-icon>
+      <ion-label position="stacked">Ngày tháng năm sinh</ion-label>
+      <ion-datetime
+        [(ngModel)]="form.dob"
+        name="dob"
+        [max]="maxDate"
+        presentation="date"
+        [disabled]="isSubmitting"
+        placeholder="Chọn ngày sinh">
+      </ion-datetime>
+    </ion-item>
+
+    <!-- Save Button -->
+    <div class="button-container">
+      <ion-button
+        expand="block"
+        (click)="save()"
+        [disabled]="isSubmitting || !form.name || form.name.trim() === ''"
+        class="save-button">
+        <ion-icon name="checkmark" slot="start"></ion-icon>
+        Lưu thay đổi
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

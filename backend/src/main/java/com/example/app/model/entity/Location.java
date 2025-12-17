@@ -33,6 +33,9 @@ public class Location {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "location_type", length = 50)
+    private String locationType; // 'RECYCLE_STATION', 'BATTERY_COLLECTION', 'GREEN_STORE'
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 }

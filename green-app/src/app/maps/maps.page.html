@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <div class="header-content">
+        <span>🗺️ Bản Đồ Xanh</span>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="maps-content">
+  <!-- Permission Help Button -->
+  <ion-button 
+    *ngIf="!userLocation" 
+    class="permission-help-btn"
+    fill="outline"
+    size="small"
+    (click)="showLocationGuide()">
+    <ion-icon name="help-circle-outline" slot="start"></ion-icon>
+    Hướng dẫn bật GPS
+  </ion-button>
+
+  <!-- Map Container -->
+  <div id="map" class="map-container"></div>
+
+  <!-- Location Type Filter -->
+  <div class="filter-section">
+    <ion-chip 
+      *ngFor="let type of locationTypes" 
+      [class.selected]="selectedLocationType === type.value"
+      (click)="selectedLocationType = type.value; onLocationTypeChange()"
+      class="filter-chip">
+      <ion-icon [name]="type.icon"></ion-icon>
+      <ion-label>{{type.label}}</ion-label>
+    </ion-chip>
+  </div>
+
+  <!-- Tracking Card -->
+  <ion-card *ngIf="isTracking" class="tracking-card">
+    <ion-card-content>
+      <div class="tracking-info">
+        <div class="tracking-header">
+          <h3>🟢 Đang theo dõi</h3>
+          <ion-button fill="clear" size="small" (click)="stopTracking()">
+            <ion-icon name="stop" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="tracking-stats">
+          <div class="stat-item">
+            <span class="stat-label">Quãng đường:</span>
+            <span class="stat-value">{{trackingDistance | number:'1.2-2'}} km</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Thời gian:</span>
+            <span class="stat-value">{{getTrackingDuration()}}</span>
+          </div>
+          <div class="stat-item highlight">
+            <span class="stat-label">Điểm ước tính:</span>
+            <span class="stat-value">+{{estimatedPoints}} GP</span>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Locations Summary Card -->
+  <ion-card class="locations-summary-card">
+    <ion-card-header>
+      <ion-card-title>Địa điểm quanh bạn</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="locations-count">
+        <ion-badge color="success">{{locations.length}}</ion-badge>
+        <span>địa điểm</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Floating Action Buttons -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="centerOnUser()" color="light">
+      <ion-icon name="location"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="start" slot="fixed">
+    <ion-fab-button 
+      [color]="isTracking ? 'danger' : 'success'"
+      (click)="isTracking ? stopTracking() : startTracking()">
+      <ion-icon [name]="isTracking ? 'stop' : 'play'"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

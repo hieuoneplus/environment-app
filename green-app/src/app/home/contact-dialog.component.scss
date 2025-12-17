@@ -1,0 +1,102 @@
+.contact-dialog-content {
+  --background: #f5f5f5;
+}
+
+.contact-info-container {
+  padding: 16px;
+}
+
+.contact-item {
+  --background: white;
+  --border-radius: 12px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+
+  .contact-icon {
+    font-size: 28px;
+    margin-right: 16px;
+    
+    &.facebook-icon {
+      color: #1877F2;
+    }
+    
+    &.phone-icon {
+      color: #4caf50;
+    }
+    
+    &.email-icon {
+      color: #FF9800;
+    }
+  }
+
+  ion-label {
+    h3 {
+      font-weight: 600;
+      color: #1B5E20;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .arrow-icon {
+    color: #A8E6CF;
+    font-size: 20px;
+  }
+}
+
+.project-contact-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #E0E0E0;
+
+    .section-icon {
+      font-size: 24px;
+      color: #1B5E20;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin: 0;
+    }
+  }
+
+  .contact-details {
+    .contact-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 12px 0;
+      padding-left: 4px;
+    }
+
+    .email-item {
+      margin-bottom: 0;
+    }
+  }
+}

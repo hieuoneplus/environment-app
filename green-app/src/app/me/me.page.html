@@ -96,9 +96,13 @@
     </ion-card>
   </div>
 
-  <!-- Settings Button -->
-  <div class="settings-section">
-    <ion-button expand="block" fill="outline" class="settings-btn">
+  <!-- Action Buttons -->
+  <div class="action-buttons-section">
+    <ion-button expand="block" fill="outline" class="action-btn" (click)="openMyRewards()">
+      <ion-icon name="gift" slot="start"></ion-icon>
+      Phần quà đã đổi
+    </ion-button>
+    <ion-button expand="block" fill="outline" class="action-btn settings-btn" (click)="openSettings()">
       <ion-icon name="settings-outline" slot="start"></ion-icon>
       Cài đặt
     </ion-button>
