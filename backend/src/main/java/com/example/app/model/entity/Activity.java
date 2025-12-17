@@ -22,11 +22,11 @@ public class Activity {
     @Column(name = "activity_type", length = 50, nullable = false)
     private String activityType; // 'SCAN', 'HABIT', 'LOCATION_CHECKIN', 'REWARD_EXCHANGE'
 
-    @Column(name = "detected_object")
+    @Column(name = "detected_object", length = 500)
     private String detectedObject; // For camera scans: 'water', 'trash', 'bus', etc.
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl; // Can be very long for base64 or URLs
 
     @Column(name = "points_earned", nullable = false)
     private Integer pointsEarned = 0;

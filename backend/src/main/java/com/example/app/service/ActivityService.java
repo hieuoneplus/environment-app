@@ -7,6 +7,7 @@ import com.example.app.model.entity.User;
 import com.example.app.repo.ActivityRepository;
 import com.example.app.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,23 +15,42 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ActivityService {
 
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
     private final PointsService pointsService;
+    private final AIImageRecognitionService aiService;
 
     @Transactional
     public ActivityResponseDTO recordActivity(UUID userId, ActivityRequestDTO request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // If image provided but no detected object, use AI to detect
+        String detectedObject = request.getDetectedObject();
+        if (request.getImageUrl() != null && (detectedObject == null || detectedObject.isEmpty())) {
+            log.info("No detected object provided, using AI detection");
+            String aiDetected = aiService.detectObject(request.getImageUrl());
+            if (aiDetected != null) {
+                detectedObject = aiService.normalizeDetectedObject(aiDetected);
+                log.info("AI detected: {}", detectedObject);
+            }
+        }
+
         Activity activity = new Activity();
         activity.setUser(user);
         activity.setActivityType(request.getActivityType());
-        activity.setDetectedObject(request.getDetectedObject());
-        activity.setImageUrl(request.getImageUrl());
-        activity.setDescription(buildDescription(request));
+        activity.setDetectedObject(detectedObject);
+        // Truncate imageUrl if too long (for base64, consider uploading to storage instead)
+        String imageUrl = request.getImageUrl();
+        if (imageUrl != null && imageUrl.length() > 10000) {
+            log.warn("Image URL very long ({} chars), consider uploading to storage", imageUrl.length());
+            // For now, keep it but log warning
+        }
+        activity.setImageUrl(imageUrl);
+        activity.setDescription(buildDescription(request, detectedObject));
 
         Integer pointsEarned = calculatePoints(request);
         activity.setPointsEarned(pointsEarned);
@@ -52,10 +72,11 @@ public class ActivityService {
         return response;
     }
 
-    private String buildDescription(ActivityRequestDTO request) {
+    private String buildDescription(ActivityRequestDTO request, String detectedObject) {
         switch (request.getActivityType()) {
             case "SCAN":
-                return String.format("Đã quét và xác nhận: %s", request.getDetectedObject());
+                String objectName = detectedObject != null ? detectedObject : "đối tượng";
+                return String.format("Đã quét và xác nhận: %s", objectName);
             case "LOCATION_CHECKIN":
                 return "Đã check-in tại địa điểm";
             default:

@@ -100,16 +100,44 @@ export class CameraPage implements OnInit {
       this.capturedImage = image.dataUrl || null;
       this.isScanning = true;
       this.detectedObject = '';
+      this.isProcessing = true;
 
-      // Simulate AI detection (in production, this would call an AI service)
-      setTimeout(() => {
-        this.detectedObject = 'Bình nước cá nhân';
-        this.isScanning = false;
-      }, 2000);
+      // Use AI to detect object
+      if (this.capturedImage) {
+        try {
+          const detection = await firstValueFrom(
+            this.activityService.detectObject(this.capturedImage)
+          );
+          
+          if (detection && detection.detectedObject) {
+            // Map detected object to Vietnamese name
+            const objectMap: { [key: string]: string } = {
+              'water': 'Bình nước',
+              'trash': 'Rác',
+              'bus': 'Xe buýt',
+              'plant': 'Cây xanh',
+              'bike': 'Xe đạp'
+            };
+            
+            this.detectedObject = objectMap[detection.detectedObject] || detection.detectedObject;
+            this.showToast(`AI đã nhận diện: ${this.detectedObject}`, 'success');
+          } else {
+            this.showToast('Không thể nhận diện đối tượng. Vui lòng chọn thủ công.', 'warning');
+          }
+        } catch (aiError: any) {
+          console.error('AI detection error:', aiError);
+          this.showToast('Lỗi AI nhận diện. Vui lòng chọn thủ công.', 'warning');
+        }
+      }
+
+      this.isScanning = false;
+      this.isProcessing = false;
 
     } catch (error) {
       console.error('Error capturing photo:', error);
       this.showToast('Lỗi khi chụp ảnh', 'danger');
+      this.isScanning = false;
+      this.isProcessing = false;
     }
   }
 
@@ -138,9 +166,20 @@ export class CameraPage implements OnInit {
     await loading.present();
 
     try {
+      // Map Vietnamese name back to English for backend
+      const objectMap: { [key: string]: string } = {
+        'Bình nước': 'water',
+        'Rác': 'trash',
+        'Xe buýt': 'bus',
+        'Cây xanh': 'plant',
+        'Xe đạp': 'bike'
+      };
+      
+      const backendObject = objectMap[finalDetectedObject] || finalDetectedObject.toLowerCase();
+      
       const activity = await firstValueFrom(this.activityService.recordActivity(user.id, {
         activityType: 'SCAN',
-        detectedObject: finalDetectedObject,
+        detectedObject: backendObject,
         imageUrl: this.capturedImage || undefined
       }));
 

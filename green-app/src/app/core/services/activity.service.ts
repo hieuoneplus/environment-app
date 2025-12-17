@@ -21,6 +21,11 @@ export interface ActivityResponse {
   newTotalPoints: number;
 }
 
+export interface AIDetectionResponse {
+  detectedObject: string;
+  rawDetection?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,6 +37,12 @@ export class ActivityService {
   recordActivity(userId: string, activity: ActivityRequest): Observable<ActivityResponse> {
     return this.http.post<ActivityResponse>(`${this.base}/api/activities`, activity, {
       params: { userId }
+    });
+  }
+
+  detectObject(imageBase64: string): Observable<AIDetectionResponse> {
+    return this.http.post<AIDetectionResponse>(`${this.base}/api/ai/detect`, {
+      imageBase64
     });
   }
 }

@@ -3,7 +3,7 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+!**/src/main/resources/detection-481418-1fadf9a25a14.json
 ### STS ###
 .apt_generated
 .classpath

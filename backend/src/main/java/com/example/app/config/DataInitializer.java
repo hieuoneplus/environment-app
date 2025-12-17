@@ -76,6 +76,26 @@ public class DataInitializer implements CommandLineRunner {
             jdbcTemplate.update("UPDATE public.users SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL");
             jdbcTemplate.update("UPDATE public.users SET updated_at = CURRENT_TIMESTAMP WHERE updated_at IS NULL");
             
+            // Fix activities table columns if needed
+            try {
+                jdbcTemplate.execute(
+                    "DO $$ " +
+                    "BEGIN " +
+                    "  -- Fix image_url column to TEXT if it's VARCHAR(255) " +
+                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='image_url' AND data_type='character varying' AND character_maximum_length=255) THEN " +
+                    "    ALTER TABLE public.activities ALTER COLUMN image_url TYPE TEXT; " +
+                    "  END IF; " +
+                    "  -- Fix detected_object column length " +
+                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='detected_object' AND character_maximum_length < 500) THEN " +
+                    "    ALTER TABLE public.activities ALTER COLUMN detected_object TYPE VARCHAR(500); " +
+                    "  END IF; " +
+                    "END $$;"
+                );
+                log.info("Activities table migration completed");
+            } catch (Exception e) {
+                log.warn("Activities table migration skipped (may already be updated): {}", e.getMessage());
+            }
+            
             log.info("Database migration completed successfully");
         } catch (Exception e) {
             log.error("Error during database migration: {}", e.getMessage());
