@@ -21,11 +21,14 @@ public class BackendApplication {
                     frontendUrl = "http://localhost:4200"; // Default for local development
                 }
                 
+                // Allow all origins for mobile apps (Android/iOS)
+                // Mobile apps don't have a traditional origin, so we need to allow all
                 registry.addMapping("/**")
-                        .allowedOrigins(frontendUrl)
+                        .allowedOriginPatterns("*") // Use allowedOriginPatterns instead of allowedOrigins to allow all
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                         .allowedHeaders("*")
                         .exposedHeaders("*")
+                        .allowCredentials(false) // Set to false for mobile apps
                         .maxAge(3600);
             }
         };
