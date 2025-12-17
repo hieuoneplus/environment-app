@@ -34,10 +34,17 @@
     backdrop-filter: blur(10px);
     border: 3px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden; // Đảm bảo ảnh không tràn ra ngoài hình tròn
 
     .logo-icon {
-      font-size: 56px;
-      color: white;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // Phủ kín container, cắt phần thừa
+      border-radius: 50%; // Làm tròn ảnh
+      // Loại bỏ nền trắng bằng cách blend với background
+      mix-blend-mode: multiply; // Nhân màu, nền trắng sẽ trong suốt
+      // Hoặc dùng screen để nền trắng trở thành trong suốt trên nền tối
+      // mix-blend-mode: screen; // Uncomment nếu multiply không hiệu quả
     }
   }
 

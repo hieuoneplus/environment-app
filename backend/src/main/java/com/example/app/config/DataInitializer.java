@@ -268,17 +268,17 @@ public class DataInitializer implements CommandLineRunner {
 //        rewardRepository.deleteAll();
 
             Reward reward1 = new Reward();
-            reward1.setName("Mã giảm giá 10k (Shopee/Grab/Lazada)");
-            reward1.setPoints(100);
+            reward1.setName("Mã giảm giá 40% (Shopee/Grab/Lazada)");
+            reward1.setPoints(9000);
             reward1.setCategory("ELECTRONIC_VOUCHER");
             reward1.setImageEmoji("🎫");
-            reward1.setDescription("Mã giảm giá 10.000đ áp dụng cho Shopee, Grab hoặc Lazada");
+            reward1.setDescription("Mã giảm giá 40% áp dụng cho Shopee, Grab hoặc Lazada");
             reward1.setIsActive(true);
             rewardRepository.save(reward1);
 
             Reward reward2 = new Reward();
             reward2.setName("Thẻ nạp điện thoại 20k");
-            reward2.setPoints(200);
+            reward2.setPoints(2000);
             reward2.setCategory("ELECTRONIC_VOUCHER");
             reward2.setImageEmoji("📱");
             reward2.setDescription("Thẻ nạp điện thoại trị giá 20.000đ");
@@ -287,7 +287,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward3 = new Reward();
             reward3.setName("Voucher Highlands Coffee / Starbucks 30k");
-            reward3.setPoints(300);
+            reward3.setPoints(3000);
             reward3.setCategory("FOOD_DRINK");
             reward3.setImageEmoji("☕");
             reward3.setDescription("Voucher 30.000đ tại Highlands Coffee hoặc Starbucks");
@@ -296,7 +296,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward4 = new Reward();
             reward4.setName("Bộ ống hút Inox & cọ rửa (kèm túi vải)");
-            reward4.setPoints(400);
+            reward4.setPoints(12000);
             reward4.setCategory("PERSONAL_ITEM");
             reward4.setImageEmoji("🥤");
             reward4.setDescription("Bộ ống hút inox cao cấp kèm cọ rửa và túi vải đựng");
@@ -305,7 +305,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward5 = new Reward();
             reward5.setName("Sen đá / Xương rồng để bàn");
-            reward5.setPoints(500);
+            reward5.setPoints(5000);
             reward5.setCategory("GREEN_GIFT");
             reward5.setImageEmoji("🌵");
             reward5.setDescription("Cây sen đá hoặc xương rồng nhỏ xinh để bàn làm việc");
@@ -314,7 +314,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward6 = new Reward();
             reward6.setName("Túi vải Canvas (Tote bag) thiết kế riêng");
-            reward6.setPoints(600);
+            reward6.setPoints(15000);
             reward6.setCategory("FASHION");
             reward6.setImageEmoji("👜");
             reward6.setDescription("Túi vải Canvas thân thiện môi trường với thiết kế độc quyền");
@@ -323,7 +323,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward7 = new Reward();
             reward7.setName("Vé tham gia Workshop (Làm nến/Tái chế)");
-            reward7.setPoints(800);
+            reward7.setPoints(8000);
             reward7.setCategory("EXPERIENCE");
             reward7.setImageEmoji("🕯️");
             reward7.setDescription("Vé tham gia workshop làm nến hoặc tái chế đồ dùng");
@@ -332,7 +332,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward8 = new Reward();
             reward8.setName("Quyên góp 01 cây rừng (Dự án Trồng Rừng)");
-            reward8.setPoints(1000);
+            reward8.setPoints(25000);
             reward8.setCategory("SOCIAL_IMPACT");
             reward8.setImageEmoji("🌲");
             reward8.setDescription("Quyên góp 1 cây rừng cho dự án trồng rừng bảo vệ môi trường");
@@ -341,7 +341,7 @@ public class DataInitializer implements CommandLineRunner {
 
             Reward reward9 = new Reward();
             reward9.setName("Bình giữ nhiệt Inox cao cấp (500ml)");
-            reward9.setPoints(1500);
+            reward9.setPoints(20000);
             reward9.setCategory("PERSONAL_ITEM");
             reward9.setImageEmoji("🧊");
             reward9.setDescription("Bình giữ nhiệt inox cao cấp dung tích 500ml, giữ nhiệt 12-24 giờ");
