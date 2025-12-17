@@ -78,22 +78,78 @@ public class DataInitializer implements CommandLineRunner {
             
             // Fix activities table columns if needed
             try {
+                log.info("Checking activities table schema...");
+                
+                // Check current column types (optional, for logging)
+                try {
+                    String imageUrlType = jdbcTemplate.queryForObject(
+                        "SELECT data_type || CASE WHEN character_maximum_length IS NOT NULL THEN '(' || character_maximum_length || ')' ELSE '' END " +
+                        "FROM information_schema.columns " +
+                        "WHERE table_name='activities' AND column_name='image_url'",
+                        String.class
+                    );
+                    log.info("Current image_url type: {}", imageUrlType);
+                } catch (Exception e) {
+                    log.warn("Could not check image_url type: {}", e.getMessage());
+                }
+                
+                try {
+                    String detectedObjectType = jdbcTemplate.queryForObject(
+                        "SELECT data_type || CASE WHEN character_maximum_length IS NOT NULL THEN '(' || character_maximum_length || ')' ELSE '' END " +
+                        "FROM information_schema.columns " +
+                        "WHERE table_name='activities' AND column_name='detected_object'",
+                        String.class
+                    );
+                    log.info("Current detected_object type: {}", detectedObjectType);
+                } catch (Exception e) {
+                    log.warn("Could not check detected_object type: {}", e.getMessage());
+                }
+                
+                // Fix image_url: Always try to convert to TEXT if it's not already
                 jdbcTemplate.execute(
                     "DO $$ " +
                     "BEGIN " +
-                    "  -- Fix image_url column to TEXT if it's VARCHAR(255) " +
-                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='image_url' AND data_type='character varying' AND character_maximum_length=255) THEN " +
-                    "    ALTER TABLE public.activities ALTER COLUMN image_url TYPE TEXT; " +
-                    "  END IF; " +
-                    "  -- Fix detected_object column length " +
-                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='detected_object' AND character_maximum_length < 500) THEN " +
-                    "    ALTER TABLE public.activities ALTER COLUMN detected_object TYPE VARCHAR(500); " +
+                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='image_url') THEN " +
+                    "    IF (SELECT data_type FROM information_schema.columns WHERE table_name='activities' AND column_name='image_url') != 'text' THEN " +
+                    "      ALTER TABLE public.activities ALTER COLUMN image_url TYPE TEXT USING image_url::TEXT; " +
+                    "      RAISE NOTICE 'Updated image_url to TEXT'; " +
+                    "    END IF; " +
                     "  END IF; " +
                     "END $$;"
                 );
-                log.info("Activities table migration completed");
+                
+                // Fix detected_object: Update to VARCHAR(500) if smaller
+                jdbcTemplate.execute(
+                    "DO $$ " +
+                    "DECLARE " +
+                    "  max_len INTEGER; " +
+                    "BEGIN " +
+                    "  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='activities' AND column_name='detected_object') THEN " +
+                    "    SELECT COALESCE(character_maximum_length, 0) INTO max_len " +
+                    "    FROM information_schema.columns " +
+                    "    WHERE table_name='activities' AND column_name='detected_object'; " +
+                    "    " +
+                    "    IF max_len < 500 THEN " +
+                    "      ALTER TABLE public.activities ALTER COLUMN detected_object TYPE VARCHAR(500); " +
+                    "      RAISE NOTICE 'Updated detected_object to VARCHAR(500)'; " +
+                    "    END IF; " +
+                    "  END IF; " +
+                    "END $$;"
+                );
+                
+                log.info("Activities table migration completed successfully");
             } catch (Exception e) {
-                log.warn("Activities table migration skipped (may already be updated): {}", e.getMessage());
+                log.error("Activities table migration failed: {}", e.getMessage(), e);
+                // Don't skip - this is critical, try direct SQL
+                try {
+                    log.info("Attempting direct SQL migration...");
+                    jdbcTemplate.execute("ALTER TABLE public.activities ALTER COLUMN image_url TYPE TEXT USING image_url::TEXT");
+                    jdbcTemplate.execute("ALTER TABLE public.activities ALTER COLUMN detected_object TYPE VARCHAR(500)");
+                    log.info("Direct SQL migration succeeded");
+                } catch (Exception e2) {
+                    log.error("Direct SQL migration also failed: {}", e2.getMessage());
+                    // Continue anyway - might already be fixed
+                }
             }
             
             log.info("Database migration completed successfully");

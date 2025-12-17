@@ -24,7 +24,8 @@ import {
   female,
   trophy,
   logOutOutline,
-  settingsOutline
+  settingsOutline,
+  flame
 } from 'ionicons/icons';
 import {DecimalPipe, CommonModule, DatePipe} from "@angular/common";
 import { AuthService, UserProfile } from '../core/services/auth.service';
@@ -71,7 +72,8 @@ export class MePage implements OnInit {
       female,
       trophy,
       logOutOutline,
-      settingsOutline
+      settingsOutline,
+      flame
     });
   }
 
@@ -109,11 +111,29 @@ export class MePage implements OnInit {
   }
 
   getGenderIcon(): string {
-    return this.userProfile?.gender === 'male' ? 'male' : 'female';
+    const gender = this.userProfile?.gender?.toLowerCase();
+    if (gender === 'nam' || gender === 'male') {
+      return 'male';
+    } else if (gender === 'nữ' || gender === 'female') {
+      return 'female';
+    }
+    return 'person'; // Default icon for "Khác" or unknown
   }
 
   getGenderText(): string {
-    return this.userProfile?.gender === 'male' ? 'Nam' : 'Nữ';
+    const gender = this.userProfile?.gender;
+    if (!gender) {
+      return 'Chưa cập nhật';
+    }
+    // Backend now sends "Nam", "Nữ", "Khác" (Vietnamese)
+    if (gender === 'Nam' || gender === 'male') {
+      return 'Nam';
+    } else if (gender === 'Nữ' || gender === 'female') {
+      return 'Nữ';
+    } else if (gender === 'Khác' || gender === 'other') {
+      return 'Khác';
+    }
+    return gender; // Return as-is if unknown format
   }
 
   getFormattedDate(): string {

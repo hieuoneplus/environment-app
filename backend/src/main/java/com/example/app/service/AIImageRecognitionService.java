@@ -46,9 +46,9 @@ public class AIImageRecognitionService {
      */
     public String detectObject(String imageBase64) {
         // Use Google Vision if credentials available
-        if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null) {
-            return detectWithGoogleVision(imageBase64);
-        }
+//        if (System.getenv("GOOGLE_APPLICATION_CREDENTIALS") != null) {
+//            return detectWithGoogleVision(imageBase64);
+//        }
 
         // Fallback to mock
         return mockDetection(imageBase64);

@@ -41,6 +41,7 @@ import { AuthService } from '../core/services/auth.service';
 import { HomeService, HabitDTO, LocationDTO } from '../core/services/home.service';
 import { HabitService } from '../core/services/habit.service';
 import { firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -66,7 +67,7 @@ import { firstValueFrom } from 'rxjs';
     CommonModule
   ],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   userName: string = '';
   currentTime: string = '';
   greenPoints: number = 0;
@@ -76,6 +77,7 @@ export class HomePage implements OnInit {
   habits: HabitDTO[] = [];
   nearbyLocations: LocationDTO[] = [];
   isLoading = false;
+  private userSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -103,6 +105,22 @@ export class HomePage implements OnInit {
     // Đảm bảo isLoading được set đúng
     this.isLoading = false;
     this.loadDashboard();
+    
+    // Subscribe to user changes to auto-update dashboard
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        // Reload dashboard when user data changes (e.g., after reward exchange, activity submission)
+        console.log('User data changed, reloading dashboard...', { greenPoints: user.greenPoints });
+        this.loadDashboard();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe to prevent memory leaks
+    if (this.userSubscription) {
+      this.userSubscription.unsubscribe();
+    }
   }
 
   async loadDashboard() {
@@ -121,12 +139,26 @@ export class HomePage implements OnInit {
       if (dashboard) {
         this.userName = dashboard.userName || user.name || 'Người dùng';
         this.currentTime = dashboard.greeting || '';
-        this.greenPoints = dashboard.greenPoints || 0;
-        this.rank = dashboard.rank || 'Chưa có hạng';
-        this.streak = dashboard.streak || 0;
+        // Use dashboard greenPoints (from backend) as primary source
+        this.greenPoints = dashboard.greenPoints ?? user.greenPoints ?? 0;
+        this.rank = dashboard.rank || user.rank || 'Chưa có hạng';
+        this.streak = dashboard.streak ?? user.streak ?? 0;
         this.habits = dashboard.todayHabits || [];
         this.nearbyLocations = dashboard.nearbyLocations || [];
-        console.log('Dashboard loaded successfully:', { userName: this.userName, habitsCount: this.habits.length });
+        
+        // Update local user data to keep in sync
+        if (user.greenPoints !== dashboard.greenPoints) {
+          user.greenPoints = dashboard.greenPoints;
+          user.rank = dashboard.rank;
+          user.streak = dashboard.streak;
+          this.authService.setUser(user);
+        }
+        
+        console.log('Dashboard loaded successfully:', { 
+          userName: this.userName, 
+          greenPoints: this.greenPoints,
+          habitsCount: this.habits.length 
+        });
       } else {
         // Fallback to user data if dashboard is null
         this.userName = user.name || 'Người dùng';

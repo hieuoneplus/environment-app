@@ -71,3 +71,49 @@
     <p>Không có phần thưởng nào</p>
   </div>
 </ion-content>
+
+<!-- Confirmation Dialog -->
+<div class="confirm-dialog-overlay" *ngIf="showConfirmDialog" (click)="closeConfirmDialog()">
+  <div class="confirm-dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <div class="dialog-icon">🎁</div>
+      <h2 class="dialog-title">Xác nhận đổi quà</h2>
+    </div>
+    
+    <div class="dialog-content" *ngIf="selectedReward">
+      <div class="reward-preview">
+        <div class="preview-emoji">{{selectedReward.imageEmoji || '🎁'}}</div>
+        <h3 class="preview-name">{{selectedReward.name}}</h3>
+        <div class="preview-points">
+          <ion-icon name="diamond" class="diamond-preview"></ion-icon>
+          <span>{{selectedReward.points | number}} GP</span>
+        </div>
+      </div>
+      
+      <div class="points-info">
+        <div class="points-before">
+          <span class="label">Điểm hiện tại:</span>
+          <span class="value">{{userPoints | number}} GP</span>
+        </div>
+        <div class="points-after">
+          <span class="label">Điểm còn lại:</span>
+          <span class="value highlight">{{(userPoints - selectedReward.points) | number}} GP</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dialog-actions">
+      <ion-button 
+        fill="outline" 
+        class="cancel-btn"
+        (click)="closeConfirmDialog()">
+        Hủy
+      </ion-button>
+      <ion-button 
+        class="confirm-btn"
+        (click)="handleConfirmExchange()">
+        Xác nhận
+      </ion-button>
+    </div>
+  </div>
+</div>

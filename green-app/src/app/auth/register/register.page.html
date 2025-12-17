@@ -79,10 +79,12 @@
           <ion-icon name="people-outline" slot="start" class="input-icon"></ion-icon>
           <ion-label position="stacked">Giới tính</ion-label>
           <ion-select
-            [(ngModel)]="form.gender"
+            [value]="form.gender"
             name="gender"
             placeholder="Chọn giới tính"
-            [disabled]="isSubmitting">
+            [disabled]="isSubmitting"
+            interface="popover"
+            (ionChange)="onGenderChange($event)">
             <ion-select-option value="Nam">Nam</ion-select-option>
             <ion-select-option value="Nữ">Nữ</ion-select-option>
             <ion-select-option value="Khác">Khác</ion-select-option>

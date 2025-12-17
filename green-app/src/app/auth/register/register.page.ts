@@ -87,9 +87,8 @@ export class RegisterPage implements OnInit {
       eyeOutline,
       eyeOffOutline
     });
-    // Set max date to today (must be 18+ years old)
+    // Set max date to today (allow any age)
     const today = new Date();
-    today.setFullYear(today.getFullYear() - 18);
     this.maxDate = today.toISOString().split('T')[0];
   }
 
@@ -124,6 +123,9 @@ export class RegisterPage implements OnInit {
     await loading.present();
 
     try {
+      // Send form data directly (no gender mapping)
+      console.log('Registering with data:', JSON.stringify(this.form));
+
       await firstValueFrom(this.authService.register(this.form));
       await loading.dismiss();
       await this.showToast('Đăng ký thành công! Vui lòng đăng nhập', 'success');
@@ -138,8 +140,23 @@ export class RegisterPage implements OnInit {
     }
   }
 
+
   togglePassword() {
     this.showPassword = !this.showPassword;
+  }
+
+  onGenderChange(event: any) {
+    const selectedValue = event.detail.value;
+    console.log('Gender selected from event:', selectedValue);
+    console.log('Event detail:', event.detail);
+    
+    // Explicitly set the value
+    this.form.gender = selectedValue;
+    
+    // Force change detection
+    setTimeout(() => {
+      console.log('Form gender after change (delayed):', this.form.gender);
+    }, 100);
   }
 
   goLogin() {

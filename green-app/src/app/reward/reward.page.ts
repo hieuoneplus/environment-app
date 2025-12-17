@@ -24,7 +24,9 @@ import { diamond } from 'ionicons/icons';
 import {DecimalPipe, CommonModule} from "@angular/common";
 import { AuthService } from '../core/services/auth.service';
 import { RewardService, RewardDTO } from '../core/services/reward.service';
+import { ProfileService } from '../core/services/profile.service';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-reward',
@@ -55,6 +57,8 @@ export class RewardPage implements OnInit {
   selectedCategory: string = 'all';
   rewards: RewardDTO[] = [];
   isLoading = false;
+  showConfirmDialog = false;
+  selectedReward: RewardDTO | null = null;
 
   categories = [
     { value: 'all', label: 'Tất cả' },
@@ -65,9 +69,9 @@ export class RewardPage implements OnInit {
   constructor(
     private authService: AuthService,
     private rewardService: RewardService,
+    private profileService: ProfileService,
     private loadingController: LoadingController,
-    private toastController: ToastController,
-    private alertController: AlertController
+    private toastController: ToastController
   ) {
     addIcons({ diamond });
   }
@@ -119,54 +123,107 @@ export class RewardPage implements OnInit {
       return;
     }
 
-    const alert = await this.alertController.create({
-      header: 'Xác nhận đổi quà',
-      message: `Bạn có chắc muốn đổi "${reward.name}" với ${reward.points} điểm?`,
-      buttons: [
-        {
-          text: 'Hủy',
-          role: 'cancel'
-        },
-        {
-          text: 'Xác nhận',
-          handler: async () => {
-            await this.confirmExchange(reward);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
+    this.selectedReward = reward;
+    this.showConfirmDialog = true;
   }
 
-  async confirmExchange(reward: RewardDTO) {
-    const user = this.authService.currentUser;
-    if (!user) {
+  closeConfirmDialog() {
+    this.showConfirmDialog = false;
+    this.selectedReward = null;
+  }
+
+  async handleConfirmExchange() {
+    if (!this.selectedReward) {
+      console.error('No reward selected');
       return;
     }
 
+    const reward = this.selectedReward;
+    this.closeConfirmDialog();
+    
+    // Small delay to ensure dialog closes smoothly
+    setTimeout(() => {
+      this.confirmExchange(reward);
+    }, 100);
+  }
+
+  async confirmExchange(reward: RewardDTO): Promise<void> {
+    if (!reward) {
+      console.error('Reward is null in confirmExchange');
+      this.showToast('Lỗi: Không tìm thấy phần thưởng', 'danger');
+      return;
+    }
+
+    const user = this.authService.currentUser;
+    if (!user || !user.id) {
+      console.error('User is null or missing id');
+      this.showToast('Vui lòng đăng nhập', 'danger');
+      return;
+    }
+
+    if (!reward.id) {
+      console.error('Reward missing id');
+      this.showToast('Lỗi: Phần thưởng không hợp lệ', 'danger');
+      return;
+    }
+
+    console.log('Starting reward exchange:', {
+      userId: user.id,
+      rewardId: reward.id,
+      rewardName: reward.name,
+      userPoints: user.greenPoints,
+      rewardPoints: reward.points
+    });
+
     const loading = await this.loadingController.create({
-      message: 'Đang xử lý...'
+      message: 'Đang xử lý...',
+      spinner: 'crescent'
     });
     await loading.present();
 
     try {
-      await firstValueFrom(this.rewardService.exchangeReward(user.id, reward.id));
-      
-      // Update user points
-      user.greenPoints -= reward.points;
-      this.authService.setUser(user);
-      this.userPoints = user.greenPoints;
+      const apiUrl = `${environment.apiBase}/api/rewards/${reward.id}/exchange?userId=${user.id}`;
+      console.log('Calling exchangeReward API...', { url: apiUrl });
+
+      const result = await firstValueFrom(this.rewardService.exchangeReward(user.id, reward.id));
+      console.log('Exchange API response:', result);
+
+      // Reload user profile from backend to get updated points
+      try {
+        const updatedProfile = await firstValueFrom(this.profileService.getProfile(user.id));
+        if (updatedProfile) {
+          this.authService.setUser(updatedProfile);
+          this.userPoints = updatedProfile.greenPoints;
+          console.log('User points updated from backend:', this.userPoints);
+        }
+      } catch (profileError) {
+        console.warn('Could not reload profile, using manual update:', profileError);
+        // Fallback: manually update points
+        const currentUser = this.authService.currentUser;
+        if (currentUser) {
+          currentUser.greenPoints -= reward.points;
+          this.authService.setUser(currentUser);
+          this.userPoints = currentUser.greenPoints;
+        }
+      }
 
       // Reload rewards to update canAfford status
       await this.loadRewards();
 
+      await loading.dismiss();
       this.showToast(`Đã đổi thành công "${reward.name}"!`, 'success');
     } catch (error: any) {
       console.error('Error exchanging reward:', error);
-      this.showToast('Lỗi: ' + (error?.error?.message || error.message), 'danger');
-    } finally {
+      console.error('Error details:', {
+        status: error?.status,
+        statusText: error?.statusText,
+        message: error?.message,
+        error: error?.error
+      });
+
       await loading.dismiss();
+      const errorMessage = error?.error?.message || error?.message || 'Không thể đổi quà. Vui lòng thử lại.';
+      this.showToast('Lỗi: ' + errorMessage, 'danger');
     }
   }
 
